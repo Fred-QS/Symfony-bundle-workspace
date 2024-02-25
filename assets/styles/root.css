@@ -1,0 +1,31 @@
+:root {
+    --main-value: 108, 46, 185;
+    --main-hover-value: 174, 133, 224;
+    --row-value: 43, 135, 218;
+    --section-value: 41, 196, 169;
+    --block-value: 76, 88, 102;
+    --danger-value: 239, 85, 85;
+    --warning-value: 255, 146, 50;
+    --gold-value: 235, 195, 52;
+
+    --main-color: rgb(var(--main-value));
+    --main-hover-color: rgb(var(--main-hover-value));
+    --row-color: rgb(var(--row-value));
+    --section-color: rgb(var(--section-value));
+    --block-color: rgb(var(--block-value));
+    --danger-color: rgb(var(--danger-value));
+    --warning-color: rgb(var(--warning-value));
+    --gold-color: rgb(var(--gold-value));
+    --text-color: #fff;
+
+    --placeholder-bg-main-color: rgba(var(--main-value), 0.1);
+    --placeholder-bg-row-color: rgba(var(--row-value), 0.1);
+    --placeholder-bg-section-color: rgba(var(--section-value), 0.1);
+    --placeholder-bg-block-color: rgba(var(--block-value), 0.1);
+    --placeholder-bg-warning-color: rgba(var(--warning-value), 0.1);
+    --placeholder-bg-gold-color: rgba(var(--gold-value), 0.1);
+
+    --bg-color-1: #fff;
+    --bg-color-2: #F6F9FB;
+    --bg-color-3: #e1e1e1
+}

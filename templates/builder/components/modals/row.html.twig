@@ -1,0 +1,18 @@
+<div id="npb-fixed-modal-row-choice" class="npb-fixed-modal">
+    <div class="npb-fixed-modal-container">
+        <div class="npb-fixed-modal-header">
+            <p class="npb-fixed-modal-title">
+                {%  include 'builder/components/icons/go-back-arrow.html.twig' %}
+                Insert row
+            </p>
+            <div class="npb-fixed-modal-close-wrapper">
+                {% include 'builder/components/icons/close.html.twig' %}
+            </div>
+        </div>
+        <div class="npb-fixed-modal-choices-container">
+            {% include 'builder/components/modals/choices/rows/normal.html.twig' %}
+            {% include 'builder/components/modals/choices/rows/special.html.twig' %}
+            {% include 'builder/components/modals/choices/rows/full.html.twig' %}
+        </div>
+    </div>
+</div>

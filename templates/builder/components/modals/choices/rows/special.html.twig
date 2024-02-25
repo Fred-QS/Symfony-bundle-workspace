@@ -1,0 +1,11 @@
+<div class="npb-fixed-modal-choices-examples npb-fixed-modal-choices-examples-special">
+    <div class="npb-fixed-modal-choices-special-row-left">
+        <span>Special</span>
+    </div>
+    <div class="npb-fixed-modal-choices-special-row-right"></div>
+</div>
+<div class="npb-fixed-modal-choices-examples-special-details npb-fixed-modal-hide-elements">
+    {% for pattern in 'a'..'i' %}
+        {% include 'builder/components/modals/choices/specials/pattern-' ~ pattern ~'.html.twig' %}
+    {% endfor %}
+</div>

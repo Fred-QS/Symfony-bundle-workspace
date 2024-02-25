@@ -1,0 +1,72 @@
+{% if type == 'normal' %}
+
+    <div id="npb-row-{{ get_timestamp() }}" data-uuid="{{ get_timestamp() }}" data-pattern="{{ rowType }}" class="npb-row npb-row-section-draggable npb-new-row npb-row-{{ type }}" {{ stimulus_controller('builder_row') }}>
+        {% set headbandType = 'row' %}
+        {% include 'builder/components/headband.html.twig' %}
+        <div class="npb-initial-add-section-btn">
+            <button type="button" class="add-section" data-title="Create new section">
+                <span class="npb-button-bg"></span>
+                <span class="npb-button-symbol">+</span>
+            </button>
+        </div>
+
+        <button type="button" class="add-row" data-title="Create new row">
+            <span class="npb-button-bg"></span>
+            <span class="npb-button-symbol">+</span>
+        </button>
+    </div>
+
+{% elseif type == 'full' %}
+
+    <div id="npb-row-{{ get_timestamp() }}" data-uuid="{{ get_timestamp() }}" data-pattern="{{ rowType }}" class="npb-row npb-row-{{ type }}" {{ stimulus_controller('builder_row') }}>
+        {% set headbandType = 'row' %}
+        {% include 'builder/components/headband.html.twig' %}
+        {% set width = 100 %}
+        <div id="npb-blocks-wrapper-{{ get_timestamp() }}" class="npb-blocks-wrapper" style="width: {{ width }}%;">
+            <button type="button" class="add-block" data-title="Create new block">
+                <span class="npb-button-bg"></span>
+                <span class="npb-button-symbol">+</span>
+            </button>
+        </div>
+
+        <button type="button" class="add-row" data-title="Create new row">
+            <span class="npb-button-bg"></span>
+            <span class="npb-button-symbol">+</span>
+        </button>
+    </div>
+
+{% elseif type == 'special' %}
+
+    <div id="npb-row" class="npb-row npb-new-row npb-row-{{ type }}" {{ stimulus_controller('builder_row') }}>
+        {% set headbandType = 'row' %}
+        {% include 'builder/components/headband.html.twig' %}
+        {% for item in pattern %}
+            {% if item.type == 'section' %}
+                <div id="npb-row-{{ get_timestamp() }}" data-uuid="{{ get_timestamp() }}" data-pattern="{{ rowType }}" class="npb-row-special-section npb-row-section-draggable" style="width: {{ item.size }}%;">
+                    <div class="npb-initial-add-section-btn">
+                        <button type="button" class="add-section" data-title="Create new section">
+                            <span class="npb-button-bg"></span>
+                            <span class="npb-button-symbol">+</span>
+                        </button>
+                    </div>
+                </div>
+            {% elseif item.type == 'blocks' %}
+                <div class="npb-row-special-blocks" style="width: {{ item.size }}%;">
+                    {% set width = 100 %}
+                    <div id="npb-blocks-wrapper-{{ get_timestamp() }}" class="npb-blocks-wrapper" style="width: {{ width }}%;">
+                        <button type="button" class="add-block" data-title="Create new block">
+                            <span class="npb-button-bg"></span>
+                            <span class="npb-button-symbol">+</span>
+                        </button>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <button type="button" class="add-row" data-title="Create new row">
+            <span class="npb-button-bg"></span>
+            <span class="npb-button-symbol">+</span>
+        </button>
+    </div>
+
+{% endif %}

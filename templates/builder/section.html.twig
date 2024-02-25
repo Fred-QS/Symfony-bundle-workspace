@@ -1,0 +1,17 @@
+<div id="npb-section-{{ get_timestamp() }}" data-uuid="{{ get_timestamp() }}" data-complexity="{{ complexity }}" data-pattern="{{ rowType }}" class="npb-section npb-section-{{ type }}" {{ stimulus_controller('builder_section') }}>
+    {% set headbandType = 'section' %}
+    {% include 'builder/components/headband.html.twig' %}
+    {% for size in pattern %}
+        {% set width = size %}
+        <div id="npb-blocks-wrapper-{{ get_timestamp() }}" class="npb-blocks-wrapper" style="width: {{ width }}%;">
+            <button type="button" class="add-block" data-title="Create new block">
+                <span class="npb-button-bg"></span>
+                <span class="npb-button-symbol">+</span>
+            </button>
+        </div>
+    {% endfor %}
+    <button type="button" class="add-section" data-title="Create new section">
+        <span class="npb-button-bg"></span>
+        <span class="npb-button-symbol">+</span>
+    </button>
+</div>

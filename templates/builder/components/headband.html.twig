@@ -1,0 +1,14 @@
+<div class="npb-headband npb-headband-{{ headbandType }}">
+    <div class="npb-headband-header npb-headband-header-{{ headbandType }}">
+        {%  set icons = ['drag', 'cog', 'duplicate', 'save', 'trash', 'dots'] %}
+        {% for icon in icons %}
+            <div class="npb-headband-header-icon-container npb-headband-header-icon-container-{{ icon }}" data-title="{{ icon }} {{ headbandType }}">
+                {% include 'builder/components/icons/' ~ icon ~ '.html.twig' %}
+            </div>
+        {% endfor %}
+    </div>
+    <input spellcheck="false" autocomplete="off" type="text" class="npb-headband-input npb-headband-input-{{ headbandType }}" value="{{ headbandType }}">
+    <div class="npb-headband-header-expand npb-headband-header-expand-{{ headbandType }}" aria-expanded="true">
+        {% include 'builder/components/icons/chevron.html.twig' %}
+    </div>
+</div>

@@ -1,0 +1,13 @@
+<div id="npb-headband-master">
+    <div id="npb-headband-master-logo">
+
+    </div>
+    <div id="npb-headband-header-master">
+        {%  set icons = ['add', 'save', 'exchange', 'clock', 'trash', 'cog', 'dots'] %}
+        {% for icon in icons %}
+            <div class="npb-headband-header-icon-container npb-headband-header-icon-container-{{ icon }}" data-title="{{ icon }} master">
+                {% include 'builder/components/icons/' ~ icon ~ '.html.twig' %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
