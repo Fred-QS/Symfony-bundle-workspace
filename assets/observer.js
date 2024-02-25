@@ -1,4 +1,5 @@
 initDomObserver();
+let fixedModalTimeout;
 
 /**
  * Initializes the DOM observer to detect and handle changes in the DOM.
@@ -53,14 +54,14 @@ function initDomObserver() {
 
                             $('.npb-fixed-modal').remove();
 
-                            if (!$(event.target).is('.add-row:disabled')
-                                && $(event.target).closest('.add-row:disabled').length === 0) {
-                                $('.add-row').attr('disabled', false);
+                            if (!$(event.target).is('.npb-add-row:disabled')
+                                && $(event.target).closest('.npb-add-row:disabled').length === 0) {
+                                $('.npb-add-row').attr('disabled', false);
                             }
 
-                            if (!$(event.target).is('.add-section:disabled')
-                                && $(event.target).closest('.add-section:disabled').length === 0) {
-                                $('.add-section').attr('disabled', false);
+                            if (!$(event.target).is('.npb-add-section:disabled')
+                                && $(event.target).closest('.npb-add-section:disabled').length === 0) {
+                                $('.npb-add-section').attr('disabled', false);
                             }
                         }
                     });
@@ -71,6 +72,13 @@ function initDomObserver() {
         }
     });
 }
+
+$(window).on('scroll', function () {
+    clearTimeout(fixedModalTimeout);
+    fixedModalTimeout = setTimeout(function() {
+        modalPositionOnScroll();
+    }, 50)
+});
 
 /**
  * Refreshes the DOM when changes occur.
@@ -173,5 +181,22 @@ function tooltipPosition(event) {
         }
 
         $('#npb-tooltip').css(position);
+    }
+}
+
+function modalPositionOnScroll() {
+
+    const modal = $('.npb-fixed-modal');
+    if (modal.length > 0) {
+        const pageY = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const modalPosY = $(modal).offset().top;
+        const modalHeight = $(modal).height();
+        if (modalPosY - pageY + modalHeight > windowHeight / 2
+        ) {
+            $(modal).addClass('npb-fixed-modal-above-target');
+        } else {
+            $(modal).removeClass('npb-fixed-modal-above-target');
+        }
     }
 }

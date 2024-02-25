@@ -134,32 +134,32 @@
     align-items: center;
 }
 
-.npb-row-special .add-row .npb-button-bg {
+.npb-row-special .npb-add-row .npb-button-bg {
     background-color: var(--warning-color);
 }
 
-.npb-row-full .add-row .npb-button-bg {
+.npb-row-full .npb-add-row .npb-button-bg {
     background-color: var(--main-color);
 }
 
-.add-row .npb-button-bg {
+.npb-add-row .npb-button-bg {
     background-color: var(--row-color);
 }
 
-.add-section .npb-button-bg {
+.npb-add-section .npb-button-bg {
     background-color: var(--section-color);
 }
 
-.npb-section-special .add-section .npb-button-bg,
-.npb-row-special-section .npb-initial-add-section-btn .add-section .npb-button-bg {
+.npb-section-special .npb-add-section .npb-button-bg,
+.npb-row-special-section .npb-initial-add-section-btn .npb-add-section .npb-button-bg {
     background-color: var(--gold-color);
 }
 
-.add-block .npb-button-bg {
+.npb-add-block .npb-button-bg {
     background-color: var(--block-color);
 }
 
-.add-row, .add-section {
+.npb-add-row, .npb-add-section {
     position: absolute;
     z-index: 2;
     bottom: -21px;
@@ -167,11 +167,11 @@
     transition: left linear 0.2s, bottom linear 0.2s;
 }
 
-.add-block {
+.npb-add-block {
     position: relative;
 }
 
-.add-row, .add-section, .add-block {
+.npb-add-row, .npb-add-section, .npb-add-block {
     color: var(--text-color);
     font-weight: bold;
     border: none;
@@ -205,7 +205,7 @@
     cursor: pointer;
 }
 
-.add-row:hover .npb-button-bg, .add-section:hover .npb-button-bg, .add-block:hover .npb-button-bg {
+.npb-add-row:hover .npb-button-bg, .npb-add-section:hover .npb-button-bg, .npb-add-block:hover .npb-button-bg {
     transform: scale(1.3);
 }
 
@@ -410,8 +410,8 @@
     z-index: 1;
 }
 
-#npb-initial-add-row-btn .add-row,
-.npb-initial-add-section-btn .add-section {
+#npb-initial-add-row-btn .npb-add-row,
+.npb-initial-add-section-btn .npb-add-section {
     position: relative;
     z-index: unset;
     bottom: unset;
@@ -505,7 +505,7 @@
 }
 
 .npb-fixed-modal {
-    position: fixed;
+    position: absolute;
     z-index: 999999;
     width: 360px;
     max-width: calc(100% - 20px);
@@ -972,4 +972,8 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
+}
+
+.npb-fixed-modal-above-target {
+    transform: translate(0, calc(-100% - 20px))
 }

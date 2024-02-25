@@ -1,3 +1,4 @@
-<div id="npb-block-{{ get_timestamp() }}" class="npb-block" {{ stimulus_controller('builder_block') }}>
+{% set timestamp = get_timestamp() %}
+<div id="npb-block-{{ timestamp }}" data-uuid="{{ timestamp }}" class="npb-block" {{ stimulus_controller('builder_block') }}>
 
 </div>

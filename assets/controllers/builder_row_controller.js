@@ -72,8 +72,8 @@ export default class extends Controller {
      */
     listeners() {
 
-        $(this.element).find('.add-row').off();
-        $(this.element).find('.add-row').on('click', (e) => {
+        $(this.element).find('.npb-add-row').off();
+        $(this.element).find('.npb-add-row').on('click', (e) => {
 
             if (e.currentTarget !== this.currentRowBtn
                 || $('.npb-fixed-modal').length === 0) {
@@ -88,8 +88,8 @@ export default class extends Controller {
             }
         });
 
-        $(this.element).find('.npb-initial-add-section-btn .add-section').off();
-        $(this.element).find('.npb-initial-add-section-btn .add-section').on('click', (e) => {
+        $(this.element).find('.npb-initial-add-section-btn .npb-add-section').off();
+        $(this.element).find('.npb-initial-add-section-btn .npb-add-section').on('click', (e) => {
 
             if (e.currentTarget !== this.currentSectionBtn
                 || $('.npb-fixed-modal').length === 0) {
@@ -155,7 +155,7 @@ export default class extends Controller {
      */
     autoAddSection() {
 
-        const addSectionBtn = $(this.element).find('.npb-initial-add-section-btn .add-section')
+        const addSectionBtn = $(this.element).find('.npb-initial-add-section-btn .npb-add-section')
         if (addSectionBtn.length > 0) {
             $(this.element).removeClass('npb-new-row')
             const addSectionPosition = $(addSectionBtn[0]).offset()
@@ -269,7 +269,8 @@ export default class extends Controller {
             this.currentSectionBtn = null
             const container = $(this.element).find('.npb-row-special-section').length === 0
                 ? '#' + $(this.element).attr('id') + ':not(.npb-row-special-section)'
-                : '#' + $(this.element).attr('id') + ' .npb-row-special-section';
+                : '#' + $(this.element).find('.npb-row-special-section').attr('id');
+
             this.ajax(
                 '/neo-page-builder/section',
                 {

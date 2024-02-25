@@ -49,8 +49,8 @@ export default class extends Controller {
      */
     listeners() {
 
-        $(this.element).find('.add-section').off();
-        $(this.element).find('.add-section').on('click', (e) => {
+        $(this.element).find('.npb-add-section').off();
+        $(this.element).find('.npb-add-section').on('click', (e) => {
 
             if (e.currentTarget !== this.currentSectionBtn
                 || $('.npb-fixed-modal').length === 0) {
@@ -70,7 +70,6 @@ export default class extends Controller {
         }
 
         if ($(this.element).closest('.npb-row-normal').length > 0) {
-            console.log('normal')
             this.dragingLogic('.npb-row-normal.npb-row-section-draggable', '.npb-section-standard');
         }
 
@@ -262,7 +261,7 @@ export default class extends Controller {
         rows.each(function(index) {
             const sections = $(this).find('.npb-section')
             if ($(sections).length < 1) {
-                $(this).find('.npb-initial-add-section-btn .add-section').prop('disabled', false)
+                $(this).find('.npb-initial-add-section-btn .npb-add-section').prop('disabled', false)
             }
             sections.each(function(index2) {
                 if ($(this).hasClass('npb-section npb-section-standard') && $(this).closest('.npb-row-special-section').length > 0) {

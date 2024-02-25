@@ -3,6 +3,16 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
 
     /**
+     * This variable represents the padding value (in pixels) for a row.
+     * It is used to add spacing between rows in a layout or table.
+     *
+     * @type {number}
+     * @default 20
+     * @since 1.0.0
+     */
+    rowPadding = 20
+
+    /**
      * Represents the current position of the mouse.
      *
      * @type {Object} MousePosition
@@ -42,7 +52,7 @@ export default class extends Controller {
                 $('.npb-fixed-modal').remove()
 
                 const btnPosition = $(e.currentTarget).offset()
-                this.mousePosition = {left: btnPosition.left + 20, top: btnPosition.top + 20}
+                this.mousePosition = {left: btnPosition.left + this.rowPadding, top: btnPosition.top + this.rowPadding}
                 this.ajax('/neo-page-builder/fixed-modal', {type: 'row'})
             }
         });

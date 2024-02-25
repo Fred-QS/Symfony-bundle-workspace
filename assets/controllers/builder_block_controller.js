@@ -49,8 +49,8 @@ export default class extends Controller {
      */
     listeners() {
 
-        $(this.element).find('.add-block').off();
-        $(this.element).find('.add-block').on('click', (e) => {
+        $(this.element).find('.npb-add-block').off();
+        $(this.element).find('.npb-add-block').on('click', (e) => {
 
             if (e.currentTarget !== this.currentBlockBtn
                 || $('.npb-fixed-modal').length === 0) {
@@ -70,7 +70,6 @@ export default class extends Controller {
         }
 
         if ($(this.element).closest('.npb-row-normal').length > 0) {
-            console.log('normal')
             this.dragingLogic('.npb-row-normal.npb-row-section-draggable', '.npb-section-standard');
         }
 
