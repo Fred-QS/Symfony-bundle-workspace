@@ -191,8 +191,7 @@ function modalPositionOnScroll() {
         const pageY = window.scrollY;
         const windowHeight = window.innerHeight;
         const modalPosY = $(modal).offset().top;
-        const modalHeight = $(modal).height();
-        if (modalPosY - pageY + modalHeight > windowHeight / 2
+        if (modalPosY - pageY > windowHeight / 2
         ) {
             $(modal).addClass('npb-fixed-modal-above-target');
         } else {

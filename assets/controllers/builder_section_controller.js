@@ -164,6 +164,7 @@ export default class extends Controller {
 
         const width = $('.npb-fixed-modal').width();
         $('.npb-fixed-modal').css({left: this.mousePosition.left - (width / 2), top: this.mousePosition.top})
+        this.modalPositionOnScroll()
 
         $('.npb-fixed-modal-close-wrapper').off()
         $('.npb-fixed-modal-close-wrapper').on('click', () => {
@@ -198,6 +199,28 @@ export default class extends Controller {
                 $(this.element)
             )
         })
+    }
+
+    /**
+     * Adjusts the position of a modal on scroll.
+     * The modal will be dynamically positioned either above or below the scroll target based on its visibility in the viewport.
+     *
+     * @returns {void}
+     */
+    modalPositionOnScroll() {
+
+        const modal = $('.npb-fixed-modal');
+        if (modal.length > 0) {
+            const pageY = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const modalPosY = $(modal).offset().top;
+            if (modalPosY - pageY > windowHeight / 2
+            ) {
+                $(modal).addClass('npb-fixed-modal-above-target');
+            } else {
+                $(modal).removeClass('npb-fixed-modal-above-target');
+            }
+        }
     }
 
     /**
