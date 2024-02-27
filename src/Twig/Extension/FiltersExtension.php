@@ -37,7 +37,7 @@ class FiltersExtension extends AbstractExtension
             // If your filter generates SAFE HTML, you should add a third
             // parameter: ['is_safe' => ['html']]
             // Reference: https://twig.symfony.com/doc/3.x/advanced.html#automatic-escaping
-            //new TwigFilter('filter_iteration', [FiltersRuntime::class, 'filterIteration']),
+            new TwigFilter('humanize_chars', [FiltersRuntime::class, 'humanizeChars']),
         ];
     }
 
@@ -60,6 +60,7 @@ class FiltersExtension extends AbstractExtension
     {
         return [
             new TwigFunction('get_timestamp', [FiltersRuntime::class, 'getTimeStamp']),
+            new TwigFunction('get_block_choices', [FiltersRuntime::class, 'getBlockChoices']),
         ];
     }
 }

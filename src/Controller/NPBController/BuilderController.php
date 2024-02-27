@@ -39,7 +39,6 @@ class BuilderController extends AbstractController
         if ($request->request->has('pattern')
             && PatternValidator::patternValidation($request->get('pattern'), 'row')
         ) {
-            $iteration = (int) $request->get('iteration');
             return $this->render('builder/row.html.twig', [
                 'fromController' => 'row',
                 'type' => str_starts_with($request->get('pattern'), 'special-') ? 'special' : $request->get('pattern'),
@@ -47,7 +46,7 @@ class BuilderController extends AbstractController
                 'rowType' => PatternValidator::getPattern($request->get('pattern'), 'row')
             ]);
         } else {
-            throw $this->createNotFoundException('Row iteration is missing in parameters');
+            throw $this->createNotFoundException('Row pattern is missing in parameters or bad formatted.');
         }
     }
 
@@ -66,7 +65,6 @@ class BuilderController extends AbstractController
             && $request->request->has('type')
             && PatternValidator::patternValidation($request->get('pattern'), 'section')
         ) {
-            $iteration = (int) $request->get('iteration');
             return $this->render('builder/section.html.twig', [
                 'fromController' => 'section',
                 'type' => $request->get('type'),
@@ -75,7 +73,7 @@ class BuilderController extends AbstractController
                 'complexity' => PatternValidator::sectionComplexityLevel($request->get('pattern'))
             ]);
         } else {
-            throw $this->createNotFoundException('Section iteration is missing in parameters');
+            throw $this->createNotFoundException('Section pattern or type are missing in parameters or bad formatted.');
         }
     }
 
@@ -90,19 +88,19 @@ class BuilderController extends AbstractController
     #[Route('/block', name: 'block')]
     public function block(Request $request): Response
     {
-        if ($request->request->has('iteration')
+        if ($request->request->has('isFullScreen')
             && $request->request->has('pattern')
-            && PatternValidator::patternValidation($request->get('pattern'), 'block')
+            && PatternValidator::patternValidation($request->get('pattern'), 'block', $request->request->has('isFullScreen') && $request->get('isFullScreen') === 'true')
         ) {
-
-            $iteration = (int) $request->get('iteration');
+            $isFullScreen = $request->request->has('isFullScreen') && $request->get('isFullScreen') === 'true';
             return $this->render('builder/block.html.twig', [
                 'fromController' => 'block',
-                'pattern' => PatternValidator::getPatternConfig($request->get('pattern'), 'block')
+                'pattern' => $request->get('pattern'),
+                'isFullScreen' => $isFullScreen,
+                'blockType' => $isFullScreen === true ? 'fullscreen' : 'regular'
             ]);
-
         } else {
-            throw $this->createNotFoundException('Block iteration is missing in parameters');
+            throw $this->createNotFoundException('Block pattern or fullscreen type are missing in parameters or bad formatted.');
         }
     }
 
@@ -121,11 +119,10 @@ class BuilderController extends AbstractController
         if ($request->request->has('type')
             && in_array($request->get('type'), ['row', 'section', 'block'], true)
         ) {
-
             $type = $request->get('type');
             $isSpecial = $request->request->has('isSpecial') && $request->get('isSpecial') === 'true';
-
-            return $this->render(sprintf('builder/components/modals/%s.html.twig', $type), compact('isSpecial'));
+            $isFullScreen = $request->request->has('isFullScreen') && $request->get('isFullScreen') === 'true';
+            return $this->render(sprintf('builder/components/modals/%s.html.twig', $type), compact('isSpecial', 'isFullScreen'));
         } else {
             throw $this->createNotFoundException('Modal choice does not exist.');
         }

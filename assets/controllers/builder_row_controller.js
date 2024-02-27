@@ -100,7 +100,37 @@ export default class extends Controller {
 
                 const btnPosition = $(e.currentTarget).offset()
                 this.mousePosition = {left: btnPosition.left + this.sectionPadding, top: btnPosition.top + this.sectionPadding}
-                this.ajax('/neo-page-builder/fixed-modal', {type: 'section', isSpecial: $(this.element).hasClass('npb-row-special')})
+                this.ajax(
+                    '/neo-page-builder/fixed-modal',
+                    {
+                        type: 'section',
+                        isSpecial: $(this.element).hasClass('npb-row-special')
+                    }
+                )
+            }
+        });
+
+        // For full screen row
+        $(this.element).find('.npb-add-block').off();
+        $(this.element).find('.npb-add-block').on('click', (e) => {
+
+            if (e.currentTarget !== this.currentBlockBtn
+                || $('.npb-fixed-modal').length === 0) {
+
+                this.currentBlockBtn = e.currentTarget
+                $(e.currentTarget).prop('disabled', true)
+                $('.npb-fixed-modal').remove()
+
+                const btnPosition = $(e.currentTarget).offset()
+                this.mousePosition = {left: btnPosition.left + this.sectionPadding, top: btnPosition.top + this.sectionPadding}
+                this.ajax(
+                    '/neo-page-builder/fixed-modal',
+                    {
+                        type: 'block',
+                        isSpecial: false,
+                        isFullScreen: $(this.element).hasClass('npb-row-full')
+                    }
+                )
             }
         });
 
@@ -178,18 +208,20 @@ export default class extends Controller {
      * @param {string|null} after - The HTML element to insert the response after, if container is not null.
      * @return {void}
      */
-    ajax(url, json, container = null, after = null, type = 'row') {
+    ajax(url, json, container = null, after = null, before = null, type = 'row') {
 
         $.post(url, json,  (data, status) => {
             if (status === 'success') {
                 if (container !== null) {
-                    if (after === null) {
+                    if (after !== null) {
+                        $(data).insertAfter($(after))
+                    } else if (before !== null) {
+                        $(data).insertBefore($(before))
+                    } else {
                         $(container).append($(data))
                         if (type === 'section') {
                             $(this.element).find('.npb-initial-add-section-btn').addClass('npb-hide-initial-btn')
                         }
-                    } else {
-                        $(data).insertAfter($(after))
                     }
                 } else {
                     this.displayChoices(data)
@@ -232,6 +264,8 @@ export default class extends Controller {
             this.currentRowBtn = null
             $(this.currentSectionBtn).prop('disabled', false)
             this.currentSectionBtn = null
+            $(this.currentBlockBtn).prop('disabled', false)
+            this.currentBlockBtn = null
         })
 
         $('.npb-fixed-modal-choices-examples-special').off()
@@ -280,7 +314,31 @@ export default class extends Controller {
                 },
                 container,
                 null,
+                null,
                 'section'
+            )
+        })
+
+        $('.npb-fixed-modal-blocks-choices-examples[data-model]').off()
+        $('.npb-fixed-modal-blocks-choices-examples[data-model]').on('click', (e) => {
+            const model = $(e.currentTarget).data('model');
+            $('.npb-fixed-modal').remove()
+            $(this.currentBlockBtn).prop('disabled', false)
+
+            const container = '#' + $(this.currentBlockBtn)
+                .closest('.npb-blocks-wrapper')
+                .find('.npb-blocks-draggable-container')
+                .attr('id');
+
+            this.currentBlockBtn = null
+
+            this.ajax(
+                '/neo-page-builder/block',
+                {
+                    pattern: model,
+                    isFullScreen: $(this.element).hasClass('npb-row-full')
+                },
+                container
             )
         })
     }
@@ -353,8 +411,31 @@ export default class extends Controller {
      * @return {undefined}
      */
     resizeInput(input) {
-        let len = ($(input).val().length + 1) * 8 + 'px'
+        let len = (($(input).val().length + 1) * 8 + 44) + 'px'
         $(input).css('width', len)
+        this.interactiveHeaderInputPosition()
+    }
+
+    /**
+     * Sets the position of the interactive header input based on the width of the container
+     * and the widths of other elements within the container.
+     *
+     * @returns {void}
+     */
+    interactiveHeaderInputPosition() {
+
+        const container = $(this.element).find('.npb-headband-interactive')
+        const input = $(container).find('.npb-headband-input-interactive')
+        const containerWidth = $(container).width()
+        const iconsContainerWidth = $(container).find('.npb-headband-header').width()
+        const inputWidth = $(input).width()
+        const width = containerWidth - iconsContainerWidth - inputWidth - 44
+        const left = containerWidth / 2 - iconsContainerWidth - (inputWidth + 22) / 2
+        if (width - 44 <= inputWidth + 40) {
+            $(input).css({left: 0})
+        } else {
+            $(input).css({left: left})
+        }
     }
 
     /**

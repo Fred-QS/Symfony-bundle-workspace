@@ -24,7 +24,8 @@
         {% set headbandType = 'row' %}
         {% include 'builder/components/headband.html.twig' %}
         {% set width = 100 %}
-        <div id="npb-blocks-wrapper-{{ timestamp }}" class="npb-blocks-wrapper" style="width: {{ width }}%;">
+        <div class="npb-blocks-wrapper" style="width: {{ width }}%;">
+            <div id="npb-blocks-draggable-container-{{ timestamp }}" class="npb-blocks-draggable-container"></div>
             <button type="button" class="npb-add-block" data-title="Create new block">
                 <span class="npb-button-bg"></span>
                 <span class="npb-button-symbol">+</span>
@@ -54,9 +55,10 @@
                     </div>
                 </div>
             {% elseif item.type == 'blocks' %}
-                <div class="npb-row-special-blocks" style="width: {{ item.size }}%;">
+                <div class="npb-row-special-blocks{% if loop.index == 1 %} npb-row-special-blocks-first{% elseif loop.index == pattern|length %} npb-row-special-blocks-last{% endif %}" style="width: {{ item.size }}%;">
                     {% set width = 100 %}
-                    <div id="npb-blocks-wrapper-{{ timestamp }}" class="npb-blocks-wrapper" style="width: {{ width }}%;">
+                    <div class="npb-blocks-wrapper" style="width: {{ width }}%;">
+                        <div id="npb-blocks-draggable-container-{{ timestamp }}" class="npb-blocks-draggable-container"></div>
                         <button type="button" class="npb-add-block" data-title="Create new block">
                             <span class="npb-button-bg"></span>
                             <span class="npb-button-symbol">+</span>

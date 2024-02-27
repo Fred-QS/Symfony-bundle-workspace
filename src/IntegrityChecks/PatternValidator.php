@@ -14,13 +14,16 @@ class PatternValidator
      *
      * @return bool Returns true if the pattern is valid for the given type, false otherwise.
      */
-    public static function patternValidation(string $pattern, string $type): bool
+    public static function patternValidation(string $pattern, string $type, bool $isFullScreen = false): bool
     {
         $reference = match ($type) {
             'row' => Constants::ROW_TYPES,
             'section' => Constants::SECTION_TYPES,
-            'block' => Constants::BLOCK_TYPES,
+            'block' => $isFullScreen === true ? Constants::BLOCK_FULLSCREEN_TYPES : Constants::BLOCK_TYPES,
         };
+        if ($type === 'block') {
+            return in_array($pattern, $reference, true);
+        }
         $patterns = array_keys($reference);
         return in_array($pattern, $patterns, true);
     }

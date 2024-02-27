@@ -6,6 +6,7 @@ import './observer.js';
  * This file will be included onto the page via the importmap() Twig function,
  * which should already be in your base.html.twig.
  */
+import './styles/fonts.css';
 import './styles/root.css';
 import './styles/builder.css';
 import './styles/app.css';

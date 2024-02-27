@@ -110,9 +110,78 @@ class Constants
         'pattern-t'  => [50, 16.6666, 16.6666, 16.6666]
     ];
 
-    public const BLOCK_TYPES = [
+    /**
+     * Constant array containing special types of sections.
+     *
+     * This array contains the names of the special section patterns.
+     *
+     * @var array
+     */
+    public const SECTION_SPECIAL_TYPE = ['pattern-a', 'pattern-b', 'pattern-c'];
 
+    /**
+     * Constant array containing different types of blocks.
+     *
+     * Each block type is represented as a string element in the array.
+     *
+     * @var array
+     */
+    public const BLOCK_TYPES = [
+        'accordion',
+        'call-to-action',
+        'audio',
+        'sidebar',
+        'toggle',
+        'blog',
+        'button',
+        'search',
+        'comments',
+        'bar-counter',
+        'circle-counter',
+        'number-counter',
+        'countdown-counter',
+        'email-optin',
+        'map',
+        'code',
+        'posts-slider',
+        'videos-slider',
+        'slider',
+        'portfolio',
+        'filtered-portfolio',
+        'header',
+        'image',
+        'gallery',
+        'contact-form',
+        'menu',
+        'icon',
+        'posts-navigation',
+        'tabs',
+        'person',
+        'summary',
+        'login',
+        'social-hubs-following',
+        'separator',
+        'text',
+        'post-title',
+        'testimonials',
+        'video',
+        'prices-table'
     ];
 
-    public const SECTION_SPECIAL_TYPE = ['pattern-a', 'pattern-b', 'pattern-c'];
+    /**
+     * The list of block types that support fullscreen mode.
+     *
+     * @var array
+     */
+    public const BLOCK_FULLSCREEN_TYPES = [
+        'code',
+        'header',
+        'image',
+        'map',
+        'menu',
+        'portfolio',
+        'post-title',
+        'posts-slider',
+        'slider'
+    ];
 }

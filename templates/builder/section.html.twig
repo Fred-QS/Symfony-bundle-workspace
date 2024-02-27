@@ -4,7 +4,8 @@
     {% include 'builder/components/headband.html.twig' %}
     {% for size in pattern %}
         {% set width = size %}
-        <div id="npb-blocks-wrapper-{{ get_timestamp() }}" class="npb-blocks-wrapper" style="width: {{ width }}%;">
+        <div class="npb-blocks-wrapper" style="width: {{ width }}%;">
+            <div id="npb-blocks-draggable-container-{{ get_timestamp() }}" class="npb-blocks-draggable-container"></div>
             <button type="button" class="npb-add-block" data-title="Create new block">
                 <span class="npb-button-bg"></span>
                 <span class="npb-button-symbol">+</span>

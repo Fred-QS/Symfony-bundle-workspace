@@ -65,12 +65,10 @@ export default class extends Controller {
             }
         });
 
-        if ($(this.element).closest('.npb-row-special').length > 0) {
-            this.dragingLogic('.npb-row-special-section.npb-row-section-draggable', '.npb-section-special');
-        }
-
-        if ($(this.element).closest('.npb-row-normal').length > 0) {
-            this.dragingLogic('.npb-row-normal.npb-row-section-draggable', '.npb-section-standard');
+        if ($(this.element).closest('.npb-row-full').length > 0) {
+            this.dragingLogic('.npb-row-full .npb-blocks-draggable-container', '.npb-block-fullscreen');
+        } else if ($(this.element).closest('.npb-section').length > 0 || $(this.element).closest('.npb-blocks-wrapper').length > 0) {
+            this.dragingLogic('.npb-row:not(.npb-row-full) .npb-blocks-draggable-container', '.npb-block-regular');
         }
 
         $(this.element).find('.npb-headband-input-block').off();
@@ -218,7 +216,7 @@ export default class extends Controller {
                 ids.push('#' + $(this).attr('id'));
             });
             let option = {
-                placeholder: 'npb-block-placeholder',
+                placeholder: $(this.element).hasClass('npb-block-fullscreen') ? 'npb-block-placeholder-fullscreen' : 'npb-block-placeholder-regular',
                 items: items,
                 handle: '.npb-headband',
                 start: function(e, ui ){
@@ -231,7 +229,6 @@ export default class extends Controller {
                         $(ids.join(', ')).sortable('cancel')
                     }
                     $(ui.item).css('opacity', 1)
-                    this.checkEmptyRows()
                 }
             }
             if (ids.length > 0) {
@@ -247,7 +244,7 @@ export default class extends Controller {
      * @param {HTMLElement} input - The input element to resize.
      */
     resizeInput(input) {
-        let len = ($(input).val().length + 1) * 8 + 'px'
+        let len = (($(input).val().length + 1) * 8 + 20) + 'px'
         $(input).css('width', len)
     }
 

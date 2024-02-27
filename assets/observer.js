@@ -63,6 +63,11 @@ function initDomObserver() {
                                 && $(event.target).closest('.npb-add-section:disabled').length === 0) {
                                 $('.npb-add-section').attr('disabled', false);
                             }
+
+                            if (!$(event.target).is('.npb-block-section:disabled')
+                                && $(event.target).closest('.npb-add-block:disabled').length === 0) {
+                                $('.npb-add-block').attr('disabled', false);
+                            }
                         }
                     });
                 } else {
@@ -78,6 +83,10 @@ $(window).on('scroll', function () {
     fixedModalTimeout = setTimeout(function() {
         modalPositionOnScroll();
     }, 50)
+});
+
+$(window).on('resize', function () {
+    interactiveHeaderInputPosition();
 });
 
 /**
@@ -184,6 +193,14 @@ function tooltipPosition(event) {
     }
 }
 
+/**
+ * Checks and updates the position of a fixed modal on scroll event.
+ *
+ * @function modalPositionOnScroll
+ * @description This function checks if a fixed modal element is present and updates its position based on the scroll position of the page.
+ *
+ * @returns {void} This function does not return a value.
+ */
 function modalPositionOnScroll() {
 
     const modal = $('.npb-fixed-modal');
@@ -196,6 +213,35 @@ function modalPositionOnScroll() {
             $(modal).addClass('npb-fixed-modal-above-target');
         } else {
             $(modal).removeClass('npb-fixed-modal-above-target');
+        }
+    }
+}
+
+/**
+ * Positions the interactive header input within the header container.
+ *
+ * This method calculates the width and position of the input element inside each interactive header container
+ * and adjusts its position accordingly.
+ *
+ * @returns {void}
+ */
+function interactiveHeaderInputPosition() {
+
+    const containers = $('.npb-headband-interactive');
+    if (containers.length > 0) {
+        for (let i = 0; i < containers.length; i++) {
+            const container = containers[i];
+            const input = $(container).find('.npb-headband-input-interactive');
+            const containerWidth = $(container).width();
+            const iconsContainerWidth = $(container).find('.npb-headband-header').width();
+            const inputWidth = $(input).width();
+            const width = containerWidth - iconsContainerWidth - inputWidth - 44;
+            const left = containerWidth / 2 - iconsContainerWidth - (inputWidth + 22) / 2;
+            if (width - 44 <= inputWidth + 40) {
+                $(input).css({left: 0});
+            } else {
+                $(input).css({left: left});
+            }
         }
     }
 }
