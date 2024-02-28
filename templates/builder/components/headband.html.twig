@@ -2,7 +2,7 @@
     <div class="npb-headband-header npb-headband-header-{{ headbandType }}">
         {%  set icons = ['drag', 'cog', 'duplicate', 'save', 'trash', 'dots'] %}
         {% for icon in icons %}
-            <div class="npb-headband-header-icon-container npb-headband-header-icon-container-{{ icon }}" data-title="{{ icon }} {{ headbandType }}">
+            <div class="npb-headband-header-icon-container npb-headband-header-icon-container-{{ icon }}{% if icon == 'cog' %} npb-headband-header-icon-container-draggable-modal{% endif %}" data-title="{{ icon }} {{ headbandType }}">
                 {% include 'builder/components/icons/headband/' ~ icon ~ '.html.twig' %}
             </div>
         {% endfor %}

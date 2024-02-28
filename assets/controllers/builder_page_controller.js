@@ -56,6 +56,13 @@ export default class extends Controller {
                 this.ajax('/neo-page-builder/fixed-modal', {type: 'row'})
             }
         });
+
+        $('#npb-headband-header-master > .npb-headband-header-icon-container-trash').off()
+        $('#npb-headband-header-master > .npb-headband-header-icon-container-trash').on('click', () => {
+            console.log('remove')
+            $('#npb-rows-wrapper > .npb-row').remove()
+            $('#npb-initial-add-row-btn').removeClass('npb-hide-initial-btn')
+        })
     }
 
     /**
@@ -103,6 +110,36 @@ export default class extends Controller {
                 '#npb-rows-wrapper'
             )
         })
+
+        $(window).on('resize', () => {
+            if ($('.npb-fixed-modal').length > 0 && this.currentRowBtn !== null) {
+                const size = $(this.currentRowBtn).offset()
+                $('.npb-fixed-modal').css({left: size.left - (width / 2) + 20, top: size.top + 20})
+            }
+            this.modalPositionOnScroll()
+        })
+    }
+
+    /**
+     * Adjusts the position of a modal on scroll.
+     * The modal will be dynamically positioned either above or below the scroll target based on its visibility in the viewport.
+     *
+     * @returns {void}
+     */
+    modalPositionOnScroll() {
+
+        const modal = $('.npb-fixed-modal');
+        if (modal.length > 0) {
+            const pageY = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const modalPosY = $(modal).offset().top;
+            if (modalPosY - pageY > windowHeight / 2
+            ) {
+                $(modal).addClass('npb-fixed-modal-above-target');
+            } else {
+                $(modal).removeClass('npb-fixed-modal-above-target');
+            }
+        }
     }
 
     /**

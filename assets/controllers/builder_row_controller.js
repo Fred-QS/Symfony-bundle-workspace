@@ -341,6 +341,17 @@ export default class extends Controller {
                 container
             )
         })
+
+        $(window).on('resize', () => {
+            if ($('.npb-fixed-modal').length > 0 && this.currentRowBtn !== null) {
+                const size = $(this.currentRowBtn).offset()
+                $('.npb-fixed-modal').css({left: size.left - (width / 2) + 20, top: size.top + 20})
+            } else if ($('.npb-fixed-modal').length > 0 && this.currentSectionBtn !== null) {
+                const size = $(this.currentSectionBtn).offset()
+                $('.npb-fixed-modal').css({left: size.left - (width / 2) + 20, top: size.top + 20})
+            }
+            this.modalPositionOnScroll()
+        })
     }
 
     /**

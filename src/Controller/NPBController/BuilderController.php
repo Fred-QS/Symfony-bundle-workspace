@@ -43,7 +43,8 @@ class BuilderController extends AbstractController
                 'fromController' => 'row',
                 'type' => str_starts_with($request->get('pattern'), 'special-') ? 'special' : $request->get('pattern'),
                 'pattern' => PatternValidator::getPatternConfig($request->get('pattern'), 'row'),
-                'rowType' => PatternValidator::getPattern($request->get('pattern'), 'row')
+                'rowType' => PatternValidator::getPattern($request->get('pattern'), 'row'),
+                'rowPattern' => $request->get('pattern')
             ]);
         } else {
             throw $this->createNotFoundException('Row pattern is missing in parameters or bad formatted.');
@@ -122,9 +123,32 @@ class BuilderController extends AbstractController
             $type = $request->get('type');
             $isSpecial = $request->request->has('isSpecial') && $request->get('isSpecial') === 'true';
             $isFullScreen = $request->request->has('isFullScreen') && $request->get('isFullScreen') === 'true';
-            return $this->render(sprintf('builder/components/modals/%s.html.twig', $type), compact('isSpecial', 'isFullScreen'));
+            return $this->render(
+                sprintf('builder/components/modals/%s.html.twig', $type),
+                compact('isSpecial', 'isFullScreen')
+            );
         } else {
             throw $this->createNotFoundException('Modal choice does not exist.');
+        }
+    }
+    #[Route('/resizable-modal', name: 'settings_modal')]
+    public function resizableModal(Request $request): Response
+    {
+        if ($request->request->has('type')
+            && in_array($request->get('type'), ['settings', 'revisions'], true)
+            && $request->request->has('info')
+        ) {
+            $type = $request->get('type');
+            $info = $request->get('info');
+            if ($type === 'revisions') {
+                return $this->render('builder/components/modals/resizable/revisions.html.twig', compact('info'));
+            }
+            return $this->render(
+                sprintf('builder/components/modals/resizable/types/%s.html.twig', $info['elementType']),
+                compact('type', 'info')
+            );
+        } else {
+            throw $this->createNotFoundException('Modal type does not exist.');
         }
     }
 }

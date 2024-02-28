@@ -39,8 +39,8 @@
     </div>
 
 {% elseif type == 'special' %}
-
-    <div id="npb-row" class="npb-row npb-new-row npb-row-{{ type }}" {{ stimulus_controller('builder_row') }}>
+    {% set row_timestamp = get_timestamp() %}
+    <div id="npb-row-{{ row_timestamp }}" data-uuid="{{ row_timestamp }}" data-pattern="{{ rowPattern }}" class="npb-row npb-new-row npb-row-{{ type }}" {{ stimulus_controller('builder_row') }}>
         {% set headbandType = 'row' %}
         {% include 'builder/components/headband.html.twig' %}
         {% for item in pattern %}

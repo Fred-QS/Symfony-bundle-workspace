@@ -1,5 +1,8 @@
 initDomObserver();
 let fixedModalTimeout;
+let page = [];
+let entitiesSettings = {};
+let startX, startY, startWidth, startHeight;
 
 /**
  * Initializes the DOM observer to detect and handle changes in the DOM.
@@ -75,6 +78,10 @@ function initDomObserver() {
                 }
             });
         }
+        $('#display-page-settings').on('click', function (){
+            console.log(page)
+            console.log(entitiesSettings)
+        })
     });
 }
 
@@ -98,6 +105,8 @@ $(window).on('resize', function () {
  */
 function refreshOnDOMChanges() {
     refreshTooltipListener();
+    settingsListener();
+    updatePage();
 }
 
 /**
@@ -244,4 +253,244 @@ function interactiveHeaderInputPosition() {
             }
         }
     }
+}
+
+function settingsListener() {
+
+    $('.npb-headband-header-icon-container-draggable-modal').off()
+    $('.npb-headband-header-icon-container-draggable-modal').on('click', function () {
+
+        const type = $(this).data('title').includes('cog') ? 'settings' : 'revisions';
+        let elementType = 'page';
+        let elementID = null;
+        let elementPattern = null;
+        let data = null;
+        let friendlyName = 'Page';
+
+        if ($(this).closest('.npb-block').length > 0) {
+
+            elementType = 'block';
+            elementID = $(this).closest('.npb-block').data('uuid');
+            elementPattern = $(this).closest('.npb-block').data('pattern');
+            data = entitiesSettings[$(this).closest('.npb-block').data('pattern')] ?? null;
+            friendlyName = $($(this).closest('.npb-block').find('.npb-headband-input')[0]).val();
+
+        } else if ($(this).closest('.npb-section').length > 0) {
+
+            elementType = 'section';
+            elementID = $(this).closest('.npb-section').data('uuid');
+            elementPattern = $(this).closest('.npb-section').data('pattern');
+            data = entitiesSettings[$(this).closest('.npb-section').data('pattern')] ?? null;
+            friendlyName = $($(this).closest('.npb-section').find('.npb-headband-input')[0]).val();
+
+        } else if ($(this).closest('.npb-row').length > 0) {
+
+            elementType = 'row';
+            elementID = $(this).closest('.npb-row').data('uuid');
+            elementPattern = $(this).closest('.npb-row').data('pattern');
+            data = entitiesSettings[$(this).closest('.npb-row').data('pattern')] ?? null;
+            friendlyName = $($(this).closest('.npb-row').find('.npb-headband-input')[0]).val();
+        }
+
+        let info = {elementID, elementType, elementPattern, data, friendlyName};
+        $.post('/neo-page-builder/resizable-modal', {type: type, info: info}, function(data, status){
+            if (status === 'success') {
+                $('#npb').append($(data));
+                $('#npb-resizable-modal-container').draggable({
+                    containment: 'window',
+                    handle: '#npb-resizable-modal-header',
+                    iframeFix: true,
+                });
+
+                $('#npb-resizable-modal-resizer').off();
+                $('#npb-resizable-modal-resizer').on('mousedown', function(e){
+
+                    $(this).addClass('npb-resizable-modal-resizer-show');
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startWidth = parseInt($('#npb-resizable-modal-container').width(), 10);
+                    startHeight = parseInt($('#npb-resizable-modal-container').height(), 10);
+                    $(document).on('mousemove', startDragModal);
+                    $(document).on('mouseup', stopDragModal);
+                });
+
+            } else {
+                console.log(data);
+            }
+        });
+    });
+}
+
+/**
+ * Updates the page data based on the current state of the HTML elements.
+ *
+ * @return {void}
+ */
+function updatePage() {
+
+    let updatedPage = [];
+    const rows = $('#npb-rows-wrapper > .npb-row');
+    for (let i = 0; i < rows.length; i++) {
+
+        let row = rows[i];
+        let rowData = {
+            elementType: 'row',
+            elementID: $(row).data('uuid'),
+            elementPattern: $(row).data('pattern'),
+            friendlyName: $($(row).find('.npb-headband-input')[0]).val(),
+            children: []
+        };
+
+        if (rowData.elementPattern.includes('special')) {
+
+            let children = $(row).children().map(function() {
+                if ($(this).hasClass('npb-row-special-blocks') || $(this).hasClass('npb-row-special-section')) {
+                    return this;
+                }
+            }).get();
+
+            for (let j = 0; j < children.length; j++) {
+                if ($(children[j]).hasClass('npb-row-special-blocks')) {
+
+                    let blocksWrappers = $(children[j]).find('.npb-blocks-wrapper');
+                    for (let l = 0; l < blocksWrappers.length; l++) {
+
+                        let blocks = $(blocksWrappers[l]).find('.npb-block');
+                        let wrapper = {
+                            type: 'blocks-wrapper',
+                            entities: []
+                        };
+
+                        for (let k = 0; k < blocks.length; k++) {
+                            wrapper.entities.push({
+                                elementType: 'block',
+                                elementID: $(blocks[k]).data('uuid'),
+                                elementPattern: $(blocks[k]).data('pattern'),
+                                friendlyName: $($(blocks[k]).find('.npb-headband-input')[0]).val(),
+                            });
+                        }
+                        rowData.children.push(wrapper);
+                    }
+
+                } else if ($(children[j]).hasClass('npb-row-special-section')) {
+
+                    let sections = $(children[j]).find('.npb-section-special').map(function() {
+
+                        let section = {
+                            elementType: 'section',
+                            elementID: $(this).data('uuid'),
+                            elementPattern: $(this).data('pattern'),
+                            friendlyName: $($(this).find('.npb-headband-input')[0]).val(),
+                            children: []
+                        };
+
+                        let blocksWrappers = $(this).find('.npb-blocks-wrapper');
+                        for (let l = 0; l < blocksWrappers.length; l++) {
+
+                            let blocks = $(blocksWrappers[l]).find('.npb-block');
+                            let wrapper = {
+                                type: 'blocks-wrapper',
+                                entities: []
+                            };
+
+                            for (let k = 0; k < blocks.length; k++) {
+                                wrapper.entities.push({
+                                    elementType: 'block',
+                                    elementID: $(blocks[k]).data('uuid'),
+                                    elementPattern: $(blocks[k]).data('pattern'),
+                                    friendlyName: $($(blocks[k]).find('.npb-headband-input')[0]).val(),
+                                });
+                            }
+                            section.children.push(wrapper);
+                        }
+                        return section;
+                    }).get();
+                    rowData.children.push({type: 'sections', entities: sections});
+                }
+            }
+
+        } else if (rowData.elementPattern === 'full') {
+
+            let blocks = $(row).find('.npb-block').map(function() {
+                return {
+                    elementType: 'block',
+                    elementID: $(this).data('uuid'),
+                    elementPattern: $(this).data('pattern'),
+                    friendlyName: $($(this).find('.npb-headband-input')[0]).val(),
+                };
+            }).get();
+
+            rowData.children = [{
+                elementType: 'blocks-wrapper',
+                children: blocks
+            }];
+
+        } else {
+
+            let sections = $(row).find('.npb-section').map(function() {
+
+                let section = {
+                    elementType: 'section',
+                    elementID: $(this).data('uuid'),
+                    elementPattern: $(this).data('pattern'),
+                    friendlyName: $($(this).find('.npb-headband-input')[0]).val(),
+                    children: []
+                };
+
+                let blocksWrappers = $(this).find('.npb-blocks-wrapper');
+                for (let j = 0; j < blocksWrappers.length; j++) {
+
+                    let blocks = $(blocksWrappers[j]).find('.npb-block');
+                    let wrapper = {
+                        type: 'blocks-wrapper',
+                        entities: []
+                    };
+
+                    for (let k = 0; k < blocks.length; k++) {
+                        wrapper.entities.push({
+                            elementType: 'block',
+                            elementID: $(blocks[k]).data('uuid'),
+                            elementPattern: $(blocks[k]).data('pattern'),
+                            friendlyName: $($(blocks[k]).find('.npb-headband-input')[0]).val()
+                        });
+                    }
+                    section.children.push(wrapper);
+                }
+                return section;
+            }).get();
+            rowData.children = sections;
+        }
+        updatedPage.push(rowData);
+    }
+    page = updatedPage;
+}
+
+/**
+ * Function to handle drag event and resize the element accordingly.
+ *
+ * @param {MouseEvent} e - The drag event object.
+ * @return {void} - This method does not return anything.
+ */
+function startDragModal(e) {
+    let w = startWidth + e.clientX - startX;
+    let h = startHeight + e.clientY - startY;
+    let offset = $('#npb-resizable-modal-container').offset();
+    if (w >= 380 && offset.left + w < window.innerWidth) {
+        $('#npb-resizable-modal-container').css({width: w});
+    }
+    if (h >= 195 && offset.top + h < window.innerHeight) {
+        $('#npb-resizable-modal-container').css({height: h});
+    }
+}
+
+/**
+ * Stops the dragging functionality.
+ *
+ * @param {Event} e - The event object.
+ * @return {void}
+ */
+function stopDragModal(e) {
+    $('#npb-resizable-modal-resizer').removeClass('npb-resizable-modal-resizer-show');
+    $(document).off('mousemove');
+    $(document).off('mouseup');
 }
