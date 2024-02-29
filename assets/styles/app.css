@@ -10,10 +10,31 @@ html, body {
 body {
     background-color: #F0F0F1;
     font-family: 'Arial', sans-serif;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 input, select {
     font-family: 'Arial', sans-serif;
+}
+
+#display-page-settings {
+    margin: 20px 0 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 40px;
+    border-radius: 4px;
+    background-color: var(--main-color);
+    cursor: pointer;
+    border: none;
+    color: var(--text-color);
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+    transition: background-color linear 0.2s;
+}
+
+#display-page-settings:active {
+    background-color: var(--placeholder-bg-main-color);
 }
 

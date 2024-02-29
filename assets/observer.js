@@ -1,8 +1,11 @@
 initDomObserver();
 let fixedModalTimeout;
-let page = [];
-let entitiesSettings = {};
+let page = {data: {}, rows: [], entitiesSettings: {}};
+let revisions = [];
 let startX, startY, startWidth, startHeight;
+let resizedModalOffset = {top: window.innerHeight - 600, left: window.innerWidth - 500};
+let resizedModalSize = {height: 'auto', width: 480};
+let resizableModalDisplayMode = 'standalone';
 
 /**
  * Initializes the DOM observer to detect and handle changes in the DOM.
@@ -74,27 +77,39 @@ function initDomObserver() {
                         }
                     });
                 } else {
-                    console.log(status);
+                    reportMessage('error', data);
                 }
             });
         }
+
         $('#display-page-settings').on('click', function (){
             console.log(page)
-            console.log(entitiesSettings)
         })
+
+        $(window).on('scroll', function () {
+            clearTimeout(fixedModalTimeout);
+            fixedModalTimeout = setTimeout(function() {
+                modalPositionOnScroll();
+            }, 50)
+        });
+
+        $(window).on('resize', function () {
+            interactiveHeaderInputPosition();
+            autoResizeResizableModal();
+        });
     });
 }
 
-$(window).on('scroll', function () {
-    clearTimeout(fixedModalTimeout);
-    fixedModalTimeout = setTimeout(function() {
-        modalPositionOnScroll();
-    }, 50)
-});
+/**
+ * Reports a message of a specified type.
+ *
+ * @param {string} type - The type of the message.
+ * @param {string} error - The error message to report.
+ */
+function reportMessage(type, error) {
 
-$(window).on('resize', function () {
-    interactiveHeaderInputPosition();
-});
+    console.log(error)
+}
 
 /**
  * Refreshes the DOM when changes occur.
@@ -119,13 +134,13 @@ function refreshOnDOMChanges() {
  */
 function refreshTooltipListener() {
 
-    $('#npb-wrapper [data-title]').on('mouseover', function(){
+    $('#npb [data-title]').on('mouseover', function(){
 
         if (window.innerWidth > 780) {
 
             const title = $(this).data('title');
             if ($('#npb-tooltip').length === 0) {
-                $('#npb-wrapper').append(`<div id="npb-tooltip"><span>${title}</span></div>`);
+                $('#npb').append(`<div id="npb-tooltip"><span>${title}</span></div>`);
             }
 
         } else {
@@ -135,7 +150,7 @@ function refreshTooltipListener() {
         }
     })
 
-    $('#npb-wrapper [data-title]').on('mouseleave', function(){
+    $('#npb [data-title]').on('mouseleave', function(){
         $('#npb-tooltip').off();
         $('#npb-tooltip').remove();
     })
@@ -255,70 +270,179 @@ function interactiveHeaderInputPosition() {
     }
 }
 
+/**
+ * Automatically resizes the resizable modal based on the window width and modal width.
+ * If the modal width is greater than or equal to half of the window width minus 20 pixels,
+ * the modal and wrapper widths are adjusted accordingly.
+ * Otherwise, the wrapper width is adjusted to accommodate the modal width.
+ *
+ * @function autoResizeResizableModal
+ * @returns {void}
+ */
+function autoResizeResizableModal() {
+
+    if ($('#npb-resizable-modal-container[data-mode="sidebar"]').length > 0
+    ) {
+        const modalWidth = $('#npb-resizable-modal-container[data-mode="sidebar"]').width();
+        if (modalWidth >= window.innerWidth /2 - 20) {
+            $('#npb-resizable-modal-container[data-mode="sidebar"]').css({width: window.innerWidth / 2 - 20, left:  window.innerWidth - modalWidth - 20});
+            $('#npb-wrapper').css({width: window.innerWidth / 2 + 20});
+            resizedModalOffset.left = window.innerWidth - modalWidth - 20;
+        } else {
+            $('#npb-wrapper').css({width: window.innerWidth - modalWidth});
+        }
+    }
+}
+
+/**
+ * Sets up a click event listener on a specific element that opens a resizable modal.
+ * The type of the modal (either 'settings' or 'revisions') is determined by the data-title attribute of the element.
+ * The content of the modal is generated based on the type and the closest ancestor of the clicked element.
+ * The modal is appended to the #npb element and positioned according to the resizedModalOffset and resizedModalSize variables.
+ * The modal is made draggable within the window and its position is updated in the resizedModalOffset variable.
+ * The modal can be resized by dragging the #npb-resizable-modal-resizer element and the size is updated in the resizedModalSize variable.
+ * The resizableModalListeners function is called to add any additional event listeners on the modal.
+ *
+ * @returns {void}
+ */
 function settingsListener() {
 
-    $('.npb-headband-header-icon-container-draggable-modal').off()
+    $('.npb-headband-header-icon-container-draggable-modal').off('click');
     $('.npb-headband-header-icon-container-draggable-modal').on('click', function () {
 
+        $('#npb-resizable-modal-container').remove();
+        $('#npb-wrapper').removeAttr('style');
+
         const type = $(this).data('title').includes('cog') ? 'settings' : 'revisions';
-        let elementType = 'page';
-        let elementID = null;
-        let elementPattern = null;
-        let data = null;
-        let friendlyName = 'Page';
 
-        if ($(this).closest('.npb-block').length > 0) {
+        if (type === 'settings') {
+            let elementType = 'page';
+            let elementID = null;
+            let elementPattern = null;
+            let data = null;
+            let friendlyName = 'Page';
 
-            elementType = 'block';
-            elementID = $(this).closest('.npb-block').data('uuid');
-            elementPattern = $(this).closest('.npb-block').data('pattern');
-            data = entitiesSettings[$(this).closest('.npb-block').data('pattern')] ?? null;
-            friendlyName = $($(this).closest('.npb-block').find('.npb-headband-input')[0]).val();
+            if ($(this).closest('.npb-block').length > 0) {
 
-        } else if ($(this).closest('.npb-section').length > 0) {
+                elementType = 'block';
+                elementID = $(this).closest('.npb-block').data('uuid');
+                elementPattern = $(this).closest('.npb-block').data('pattern');
+                data = page.entitiesSettings[$(this).closest('.npb-block').data('pattern')] ?? null;
+                friendlyName = $($(this).closest('.npb-block').find('.npb-headband-input')[0]).val();
 
-            elementType = 'section';
-            elementID = $(this).closest('.npb-section').data('uuid');
-            elementPattern = $(this).closest('.npb-section').data('pattern');
-            data = entitiesSettings[$(this).closest('.npb-section').data('pattern')] ?? null;
-            friendlyName = $($(this).closest('.npb-section').find('.npb-headband-input')[0]).val();
+            } else if ($(this).closest('.npb-section').length > 0) {
 
-        } else if ($(this).closest('.npb-row').length > 0) {
+                elementType = 'section';
+                elementID = $(this).closest('.npb-section').data('uuid');
+                elementPattern = $(this).closest('.npb-section').data('pattern');
+                data = page.entitiesSettings[$(this).closest('.npb-section').data('pattern')] ?? null;
+                friendlyName = $($(this).closest('.npb-section').find('.npb-headband-input')[0]).val();
 
-            elementType = 'row';
-            elementID = $(this).closest('.npb-row').data('uuid');
-            elementPattern = $(this).closest('.npb-row').data('pattern');
-            data = entitiesSettings[$(this).closest('.npb-row').data('pattern')] ?? null;
-            friendlyName = $($(this).closest('.npb-row').find('.npb-headband-input')[0]).val();
+            } else if ($(this).closest('.npb-row').length > 0) {
+
+                elementType = 'row';
+                elementID = $(this).closest('.npb-row').data('uuid');
+                elementPattern = $(this).closest('.npb-row').data('pattern');
+                data = page.entitiesSettings[$(this).closest('.npb-row').data('pattern')] ?? null;
+                friendlyName = $($(this).closest('.npb-row').find('.npb-headband-input')[0]).val();
+            }
+
+            let entitySettings = page.entitiesSettings[elementID] ?? null;
+            let info = {elementID, elementType, elementPattern, data, friendlyName, entitySettings};
+
+            $.post(
+                '/neo-page-builder/resizable-modal',
+                {
+                    type: type,
+                    info: info,
+                    mode: resizableModalDisplayMode
+                },
+                function (data, status) {
+                    if (status === 'success') {
+
+                        $('#npb').append($(data));
+                        $('#npb-resizable-modal-container').css({
+                            top: resizedModalOffset.top,
+                            left: resizedModalOffset.left,
+                            width: resizedModalSize.width,
+                            height: resizedModalSize.height,
+                        });
+
+                        $('#npb-resizable-modal-container').draggable({
+                            containment: 'window',
+                            handle: '#npb-resizable-modal-header',
+                            iframeFix: true,
+                            cancel: '#npb-resizable-modal-container:not([data-mode="standalone"])',
+                            stop: function( event, ui ) {
+                                resizedModalOffset.left = Math.max(0, ui.position.left);
+                                resizedModalOffset.top = Math.max(0, ui.position.top);
+                            }
+                        });
+
+                        $('#npb-resizable-modal-resizer').off();
+                        $('#npb-resizable-modal-resizer').on('mousedown', function (e) {
+
+                            if ($('#npb-resizable-modal-container').attr('data-mode') !== 'fullscreen') {
+
+                                $(this).addClass('npb-resizable-modal-resizer-show');
+
+                                startX = e.clientX;
+                                startY = e.clientY;
+                                startWidth = parseInt($('#npb-resizable-modal-container').width(), 10);
+                                startHeight = parseInt($('#npb-resizable-modal-container').height(), 10);
+
+                                $(document).on('mousemove', startDrag);
+                            }
+
+                            $(document).on('mouseup', function () {
+                                $('#npb-resizable-modal-resizer').removeClass('npb-resizable-modal-resizer-show');
+                                $(document).off('mousemove');
+                                $(document).off('mouseup');
+                                $(document).on('mousemove', function (event) {
+                                    tooltipPosition(event);
+                                });
+                            });
+                        });
+
+                        resizableModalListeners();
+
+                    } else {
+                        reportMessage('error', data);
+                    }
+                }
+            );
+        }
+    });
+}
+
+function startDrag(ev) {
+
+    if ($('#npb-resizable-modal-container').attr('data-mode') === 'standalone') {
+
+        let w = startWidth + ev.clientX - startX;
+        let h = startHeight + ev.clientY - startY;
+        let offset = $('#npb-resizable-modal-container').offset();
+        resizedModalSize = {height: h, width: w};
+
+        if (w >= 380 && offset.left + w < window.innerWidth - 10) {
+            $('#npb-resizable-modal-container').css({width: w});
         }
 
-        let info = {elementID, elementType, elementPattern, data, friendlyName};
-        $.post('/neo-page-builder/resizable-modal', {type: type, info: info}, function(data, status){
-            if (status === 'success') {
-                $('#npb').append($(data));
-                $('#npb-resizable-modal-container').draggable({
-                    containment: 'window',
-                    handle: '#npb-resizable-modal-header',
-                    iframeFix: true,
-                });
+        if (h >= 195 && offset.top + h < window.innerHeight - 10) {
+            $('#npb-resizable-modal-container').css({height: h});
+        }
 
-                $('#npb-resizable-modal-resizer').off();
-                $('#npb-resizable-modal-resizer').on('mousedown', function(e){
+    } else if ($('#npb-resizable-modal-container').attr('data-mode') === 'sidebar') {
 
-                    $(this).addClass('npb-resizable-modal-resizer-show');
-                    startX = e.clientX;
-                    startY = e.clientY;
-                    startWidth = parseInt($('#npb-resizable-modal-container').width(), 10);
-                    startHeight = parseInt($('#npb-resizable-modal-container').height(), 10);
-                    $(document).on('mousemove', startDragModal);
-                    $(document).on('mouseup', stopDragModal);
-                });
+        let w = window.innerWidth - ev.clientX;
+        let offset = $('#npb-resizable-modal-container').offset();
+        resizedModalSize = {height: resizedModalSize.height, width: w};
 
-            } else {
-                console.log(data);
-            }
-        });
-    });
+        if (w >= 380 && w < window.innerWidth / 2 - 10) {
+            $('#npb-resizable-modal-container').css({width: w});
+            $('#npb-wrapper').css({width: window.innerWidth - w});
+        }
+    }
 }
 
 /**
@@ -462,35 +586,66 @@ function updatePage() {
         }
         updatedPage.push(rowData);
     }
-    page = updatedPage;
+    page.rows = updatedPage;
 }
 
-/**
- * Function to handle drag event and resize the element accordingly.
- *
- * @param {MouseEvent} e - The drag event object.
- * @return {void} - This method does not return anything.
- */
-function startDragModal(e) {
-    let w = startWidth + e.clientX - startX;
-    let h = startHeight + e.clientY - startY;
-    let offset = $('#npb-resizable-modal-container').offset();
-    if (w >= 380 && offset.left + w < window.innerWidth) {
-        $('#npb-resizable-modal-container').css({width: w});
-    }
-    if (h >= 195 && offset.top + h < window.innerHeight) {
-        $('#npb-resizable-modal-container').css({height: h});
-    }
-}
+function resizableModalListeners() {
 
-/**
- * Stops the dragging functionality.
- *
- * @param {Event} e - The event object.
- * @return {void}
- */
-function stopDragModal(e) {
-    $('#npb-resizable-modal-resizer').removeClass('npb-resizable-modal-resizer-show');
-    $(document).off('mousemove');
-    $(document).off('mouseup');
+    //Header buttons
+    $('#npb-resizable-modal-header-icon-fullscreen').off('click');
+    $('#npb-resizable-modal-header-icon-fullscreen').on('click', function () {
+        const data = $('#npb-resizable-modal-container').attr('data-mode');
+        if (data === 'standalone' || data === 'sidebar') {
+            $('#npb-resizable-modal-container').attr('data-mode', 'fullscreen');
+        } else {
+            $('#npb-resizable-modal-container').attr('data-mode', 'standalone');
+        }
+        $('#npb-tooltip').remove();
+        $('#npb-wrapper').removeAttr('style');
+    });
+
+    $('#npb-resizable-modal-header-icon-sidebar').off('click');
+    $('#npb-resizable-modal-header-icon-sidebar').on('click', function () {
+        const data = $('#npb-resizable-modal-container').attr('data-mode');
+        if (data === 'standalone' || data === 'fullscreen') {
+            $('#npb-resizable-modal-container').attr('data-mode', 'sidebar');
+            const modalWidth = $('#npb-resizable-modal-container').width();
+            $('#npb-wrapper').css({width: 'calc(100% - ' + modalWidth + 'px)'});
+        } else {
+            $('#npb-resizable-modal-container').attr('data-mode', 'standalone');
+            $('#npb-wrapper').removeAttr('style');
+        }
+        $('#npb-tooltip').remove();
+    });
+
+    $('#npb-resizable-modal-header-icon-details').off('click');
+    $('#npb-resizable-modal-header-icon-details').on('click', function () {
+
+    });
+
+    // Footer buttons
+    $('#npb-resizable-modal-footer-icon-close').off('click');
+    $('#npb-resizable-modal-footer-icon-close').on('click', function () {
+        $('#npb-resizable-modal-container').remove();
+        $('#npb-tooltip').remove();
+        $('#npb-wrapper').removeAttr('style');
+    });
+
+    $('#npb-resizable-modal-footer-icon-backward').off('click');
+    $('#npb-resizable-modal-footer-icon-backward').on('click', function () {
+
+    });
+
+    $('#npb-resizable-modal-footer-icon-forward').off('click');
+    $('#npb-resizable-modal-footer-icon-forward').on('click', function () {
+
+    });
+
+    $('#npb-resizable-modal-footer-icon-check').off('click');
+    $('#npb-resizable-modal-footer-icon-check').on('click', function () {
+
+        $('#npb-resizable-modal-container').remove();
+        $('#npb-tooltip').remove();
+        $('#npb-wrapper').removeAttr('style');
+    });
 }

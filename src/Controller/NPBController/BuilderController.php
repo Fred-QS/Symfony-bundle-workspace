@@ -137,18 +137,25 @@ class BuilderController extends AbstractController
         if ($request->request->has('type')
             && in_array($request->get('type'), ['settings', 'revisions'], true)
             && $request->request->has('info')
+            && $request->request->has('mode')
+            && in_array($request->get('mode'), ['fullscreen', 'standalone', 'sidebar'], true)
         ) {
+
             $type = $request->get('type');
             $info = $request->get('info');
-            if ($type === 'revisions') {
-                return $this->render('builder/components/modals/resizable/revisions.html.twig', compact('info'));
-            }
-            return $this->render(
-                sprintf('builder/components/modals/resizable/types/%s.html.twig', $info['elementType']),
-                compact('type', 'info')
-            );
+            $mode = $request->get('mode');
+
+            return $type === 'revisions'
+                ? $this->render('builder/components/modals/resizable/revisions.html.twig',
+                    compact('info', 'mode')
+                )
+                : $this->render(
+                    sprintf('builder/components/modals/resizable/types/%s.html.twig', $info['elementType']),
+                    compact('type', 'info', 'mode')
+                );
+
         } else {
-            throw $this->createNotFoundException('Modal type does not exist.');
+            throw $this->createNotFoundException('Modal type does not exist or info is missing in parameters.');
         }
     }
 }

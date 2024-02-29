@@ -52,14 +52,14 @@ export default class extends Controller {
                 $('.npb-fixed-modal').remove()
 
                 const btnPosition = $(e.currentTarget).offset()
-                this.mousePosition = {left: btnPosition.left + this.rowPadding, top: btnPosition.top + this.rowPadding}
+                const npbContainerTop = $('#npb').offset().top;
+                this.mousePosition = {left: btnPosition.left + this.rowPadding, top: btnPosition.top + this.rowPadding - npbContainerTop};
                 this.ajax('/neo-page-builder/fixed-modal', {type: 'row'})
             }
         });
 
         $('#npb-headband-header-master > .npb-headband-header-icon-container-trash').off()
         $('#npb-headband-header-master > .npb-headband-header-icon-container-trash').on('click', () => {
-            console.log('remove')
             $('#npb-rows-wrapper > .npb-row').remove()
             $('#npb-initial-add-row-btn').removeClass('npb-hide-initial-btn')
         })
@@ -113,8 +113,9 @@ export default class extends Controller {
 
         $(window).on('resize', () => {
             if ($('.npb-fixed-modal').length > 0 && this.currentRowBtn !== null) {
-                const size = $(this.currentRowBtn).offset()
-                $('.npb-fixed-modal').css({left: size.left - (width / 2) + 20, top: size.top + 20})
+                const size = $(this.currentRowBtn).offset();
+                const npbContainerTop = $('#npb').offset().top;
+                $('.npb-fixed-modal').css({left: size.left - (width / 2) + 20, top: size.top + this.rowPadding - npbContainerTop})
             }
             this.modalPositionOnScroll()
         })

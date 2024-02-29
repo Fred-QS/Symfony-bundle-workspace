@@ -79,6 +79,9 @@ export default class extends Controller {
                 || $('.npb-fixed-modal').length === 0) {
 
                 this.currentRowBtn = e.currentTarget
+                this.currentSectionBtn = null
+                this.currentBlockBtn = null
+
                 $(e.currentTarget).prop('disabled', true)
                 $('.npb-fixed-modal').remove()
 
@@ -95,11 +98,14 @@ export default class extends Controller {
                 || $('.npb-fixed-modal').length === 0) {
 
                 this.currentSectionBtn = e.currentTarget
+                this.currentRowBtn = null
+                this.currentBlockBtn = null
+
                 $(e.currentTarget).prop('disabled', true)
                 $('.npb-fixed-modal').remove()
 
                 const btnPosition = $(e.currentTarget).offset()
-                this.mousePosition = {left: btnPosition.left + this.sectionPadding, top: btnPosition.top + this.sectionPadding}
+                this.mousePosition = {left: btnPosition.left + this.sectionPadding, top: btnPosition.top + this.rowPadding}
                 this.ajax(
                     '/neo-page-builder/fixed-modal',
                     {
@@ -118,11 +124,14 @@ export default class extends Controller {
                 || $('.npb-fixed-modal').length === 0) {
 
                 this.currentBlockBtn = e.currentTarget
+                this.currentSectionBtn = null
+                this.currentRowBtn = null
+
                 $(e.currentTarget).prop('disabled', true)
                 $('.npb-fixed-modal').remove()
 
                 const btnPosition = $(e.currentTarget).offset()
-                this.mousePosition = {left: btnPosition.left + this.sectionPadding, top: btnPosition.top + this.sectionPadding}
+                this.mousePosition = {left: btnPosition.left + this.sectionPadding, top: btnPosition.top + this.rowPadding}
                 this.ajax(
                     '/neo-page-builder/fixed-modal',
                     {
@@ -254,7 +263,11 @@ export default class extends Controller {
         $('#npb-wrapper').append(html)
 
         const width = $('.npb-fixed-modal').width();
-        $('.npb-fixed-modal').css({left: this.mousePosition.left - (width / 2), top: this.mousePosition.top})
+        const npbContainerTop = $('#npb').offset().top;
+        $('.npb-fixed-modal').css({
+            left: this.mousePosition.left - (width / 2),
+            top: this.mousePosition.top - npbContainerTop
+        });
         this.modalPositionOnScroll()
 
         $('.npb-fixed-modal-close-wrapper').off()
@@ -287,7 +300,9 @@ export default class extends Controller {
             const model = $(e.currentTarget).data('model');
             $('.npb-fixed-modal').remove()
             $(this.currentRowBtn).prop('disabled', false)
+
             this.currentRowBtn = null
+
             this.ajax(
                 '/neo-page-builder/row',
                 {pattern: model},
@@ -301,7 +316,9 @@ export default class extends Controller {
             const model = $(e.currentTarget).data('model');
             $('.npb-fixed-modal').remove()
             $(this.currentSectionBtn).prop('disabled', false)
+
             this.currentSectionBtn = null
+
             const container = $(this.element).find('.npb-row-special-section').length === 0
                 ? '#' + $(this.element).attr('id') + ':not(.npb-row-special-section)'
                 : '#' + $(this.element).find('.npb-row-special-section').attr('id');
@@ -343,12 +360,16 @@ export default class extends Controller {
         })
 
         $(window).on('resize', () => {
+            const npbContainerTop = $('#npb').offset().top
             if ($('.npb-fixed-modal').length > 0 && this.currentRowBtn !== null) {
                 const size = $(this.currentRowBtn).offset()
-                $('.npb-fixed-modal').css({left: size.left - (width / 2) + 20, top: size.top + 20})
+                $('.npb-fixed-modal').css({left: size.left - (width / 2) + this.rowPadding, top: size.top + this.rowPadding - npbContainerTop})
             } else if ($('.npb-fixed-modal').length > 0 && this.currentSectionBtn !== null) {
                 const size = $(this.currentSectionBtn).offset()
-                $('.npb-fixed-modal').css({left: size.left - (width / 2) + 20, top: size.top + 20})
+                $('.npb-fixed-modal').css({left: size.left - (width / 2) + this.sectionPadding, top: size.top + this.sectionPadding - npbContainerTop})
+            } else if ($('.npb-fixed-modal').length > 0 && this.currentBlockBtn !== null && $(this.currentBlockBtn).offset() !== undefined) {
+                const size = $(this.currentBlockBtn).offset()
+                $('.npb-fixed-modal').css({left: size.left - (width / 2) + this.sectionPadding, top: size.top + this.sectionPadding - npbContainerTop})
             }
             this.modalPositionOnScroll()
         })

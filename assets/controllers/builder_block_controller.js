@@ -49,22 +49,6 @@ export default class extends Controller {
      */
     listeners() {
 
-        $(this.element).find('.npb-add-block').off();
-        $(this.element).find('.npb-add-block').on('click', (e) => {
-
-            if (e.currentTarget !== this.currentBlockBtn
-                || $('.npb-fixed-modal').length === 0) {
-
-                this.currentBlockBtn = e.currentTarget
-                $(e.currentTarget).prop('disabled', true)
-                $('.npb-fixed-modal').remove()
-
-                const btnPosition = $(e.currentTarget).offset()
-                this.mousePosition = {left: btnPosition.left + this.blockPadding, top: btnPosition.top + this.blockPadding}
-                this.ajax('/neo-page-builder/fixed-modal', {type: 'block', isSpecial: $(this.element).closest('.npb-section-special').length > 0})
-            }
-        });
-
         if ($(this.element).closest('.npb-row-full').length > 0) {
             this.dragingLogic('.npb-row-full .npb-blocks-draggable-container', '.npb-block-fullscreen');
         } else if ($(this.element).closest('.npb-section').length > 0 || $(this.element).closest('.npb-blocks-wrapper').length > 0) {
@@ -79,11 +63,6 @@ export default class extends Controller {
         $(this.element).find('.npb-headband-input-block').on('focusout', (e) => {
             this.placeholderIfEmptyValue(e.currentTarget)
         });
-
-        $(this.element).find('.npb-headband-header-expand').off();
-        $(this.element).find('.npb-headband-header-expand').on('click', (e) => {
-            this.expandElement(e.currentTarget);
-        });
     }
 
     /**
@@ -91,7 +70,7 @@ export default class extends Controller {
      */
     headerIconListeners() {
 
-        $(this.element).find('.npb-headband-header-icon-container').off()
+        $(this.element).find('.npb-headband-header-icon-container').off('click')
         $(this.element).find('.npb-headband-header-icon-container').on('click', (e) => {
 
             const elmt = e.currentTarget
@@ -115,24 +94,14 @@ export default class extends Controller {
      *
      * @param {string} url - The URL to send the AJAX request to.
      * @param {Object} json - The JSON data to send in the request body.
-     * @param {string|null} container - The DOM element selector where the response HTML should be appended to.
-     *                                 If null, the response data will be passed to the displayChoices method instead.
-     * @param {string|null} after - The DOM element selector after which the response HTML should be inserted.
-     *                              This parameter is only used if container is not null.
+     * @param {string} container - The DOM element selector where the response HTML should be appended to.
+     * @param {string} after - The DOM element selector after which the response HTML should be inserted.
      * @return {void}
      */
-    ajax(url, json, container = null, after = null) {
+    ajax(url, json, container, after) {
         $.post(url, json,  (data, status) => {
             if (status === 'success') {
-                if (container !== null) {
-                    if (after === null) {
-                        $(container).append($(data))
-                    } else {
-                        $(data).insertAfter($(after))
-                    }
-                } else {
-                    this.displayChoices(data)
-                }
+                $(data).insertAfter($(after))
             } else {
                 this.reportMessage('error', status)
             }
@@ -147,58 +116,6 @@ export default class extends Controller {
      */
     reportMessage(type, status) {
         console.log(status)
-    }
-
-    /**
-     * Displays choices in a fixed modal on the page.
-     *
-     * @param {string} html - The HTML content to display in the fixed modal.
-     */
-    displayChoices(html) {
-
-        $('#npb-wrapper').append(html)
-
-        const width = $('.npb-fixed-modal').width();
-        $('.npb-fixed-modal').css({left: this.mousePosition.left - (width / 2), top: this.mousePosition.top})
-
-        $('.npb-fixed-modal-close-wrapper').off()
-        $('.npb-fixed-modal-close-wrapper').on('click', () => {
-            $('.npb-fixed-modal').remove()
-            $(this.currentBlockBtn).prop('disabled', false)
-            this.currentBlockBtn = null
-        })
-
-        $('.npb-fixed-modal-sections-choices-examples[data-model]').off()
-        $('.npb-fixed-modal-sections-choices-examples[data-model]').on('click', (e) => {
-            const model = $(e.currentTarget).data('model');
-            $('.npb-fixed-modal').remove()
-            $(this.currentBlockBtn).prop('disabled', false)
-            this.currentBlockBtn = null
-
-            const container = '#' + $(this.element)
-                .closest('.npb-section')
-                .attr('id');
-
-            const iteration = $(this.element)
-                .closest('.npb-section')
-                .find('.npb-block')
-                .length
-
-            this.ajax(
-                '/neo-page-builder/block',
-                {
-                    iteration: iteration,
-                    pattern: model,
-                    type: $(this.element)
-                        .closest('.npb-row-special-section')
-                        .length > 0
-                        ? 'special'
-                        : 'standard'
-                },
-                container,
-                $(this.element)
-            )
-        })
     }
 
     /**
