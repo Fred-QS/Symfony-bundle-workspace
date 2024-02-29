@@ -1161,6 +1161,15 @@
     z-index: 2;
 }
 
+[data-mode="fullscreen"] #npb-resizable-modal-header-icon-fullscreen path:last-child {
+    display: none;
+}
+
+[data-mode="sidebar"] #npb-resizable-modal-header-icon-fullscreen path:first-child,
+[data-mode="standalone"] #npb-resizable-modal-header-icon-fullscreen path:first-child {
+    display: none;
+}
+
 .npb-resizable-modal-header-icon {
     display: flex;
     justify-content: center;

@@ -361,6 +361,12 @@ function settingsListener() {
                     if (status === 'success') {
 
                         $('#npb').append($(data));
+
+                        if (resizableModalDisplayMode === 'sidebar') {
+                            const modalWidth = $('#npb-resizable-modal-container').width();
+                            $('#npb-wrapper').css({width: 'calc(100% - ' + modalWidth + 'px)'});
+                        }
+
                         $('#npb-resizable-modal-container').css({
                             top: resizedModalOffset.top,
                             left: resizedModalOffset.left,
@@ -597,8 +603,10 @@ function resizableModalListeners() {
         const data = $('#npb-resizable-modal-container').attr('data-mode');
         if (data === 'standalone' || data === 'sidebar') {
             $('#npb-resizable-modal-container').attr('data-mode', 'fullscreen');
+            resizableModalDisplayMode = 'fullscreen';
         } else {
             $('#npb-resizable-modal-container').attr('data-mode', 'standalone');
+            resizableModalDisplayMode = 'standalone';
         }
         $('#npb-tooltip').remove();
         $('#npb-wrapper').removeAttr('style');
@@ -611,9 +619,11 @@ function resizableModalListeners() {
             $('#npb-resizable-modal-container').attr('data-mode', 'sidebar');
             const modalWidth = $('#npb-resizable-modal-container').width();
             $('#npb-wrapper').css({width: 'calc(100% - ' + modalWidth + 'px)'});
+            resizableModalDisplayMode = 'sidebar';
         } else {
             $('#npb-resizable-modal-container').attr('data-mode', 'standalone');
             $('#npb-wrapper').removeAttr('style');
+            resizableModalDisplayMode = 'standalone';
         }
         $('#npb-tooltip').remove();
     });
