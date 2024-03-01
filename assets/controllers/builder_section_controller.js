@@ -36,6 +36,13 @@ export default class extends Controller {
     currentBlockBtn = null
 
     /**
+     * Represents the button that corresponds to the current header button.
+     *
+     * @type {HTMLElement|null}
+     */
+    currentHeaderBtn = null
+
+    /**
      * Connects the page builder headband to its listeners and performs necessary initialization tasks.
      *
      * @memberOf PageBuilderHeadband
@@ -64,6 +71,7 @@ export default class extends Controller {
 
                 this.currentSectionBtn = e.currentTarget
                 this.currentBlockBtn = null
+                this.currentHeaderBtn = null
 
                 $(e.currentTarget).prop('disabled', true)
                 $('.npb-fixed-modal').remove()
@@ -75,7 +83,8 @@ export default class extends Controller {
                     '/neo-page-builder/fixed-modal',
                     {
                         type: 'section', isSpecial: $(this.element).hasClass('npb-section-special')
-                    }
+                    },
+                    this.currentSectionBtn
                 )
             }
         });
@@ -88,6 +97,7 @@ export default class extends Controller {
 
                 this.currentBlockBtn = e.currentTarget
                 this.currentSectionBtn = null
+                this.currentHeaderBtn = null
 
                 $(e.currentTarget).prop('disabled', true)
                 $('.npb-fixed-modal').remove()
@@ -101,7 +111,8 @@ export default class extends Controller {
                         type: 'block',
                         isSpecial: $(this.element).closest('npb-section-special').length > 0,
                         isFullScreen: $(this.element).closest('.npb-row-full').length > 0
-                    }
+                    },
+                    this.currentBlockBtn
                 )
             }
         });
@@ -150,6 +161,41 @@ export default class extends Controller {
                     $(addSectionBtn).removeClass('npb-hide-initial-btn')
                 }
                 this.orderSections()
+
+            } else if ($(elmt).hasClass('npb-headband-header-icon-container-save')
+                || $(elmt).hasClass('npb-headband-header-icon-container-dots')
+            ) {
+
+                if (elmt !== this.currentHeaderBtn || $('.npb-fixed-modal').length === 0) {
+
+                    if (this.currentHeaderBtn !== null) {
+                        $(this.currentHeaderBtn).prop('disabled', false);
+                    }
+
+                    this.currentHeaderBtn = elmt
+                    $(elmt).prop('disabled', true)
+                    $('.npb-fixed-modal').remove()
+
+                    const btnPosition = $(elmt).offset()
+                    const npbContainerTop = $('#npb').offset().top
+                    this.mousePosition = {
+                        left: btnPosition.left + this.sectionPadding - 5,
+                        top: btnPosition.top - npbContainerTop
+                    }
+
+                    const uuid = $(elmt).closest('[data-uuid]').attr('data-uuid')
+                    $.post(
+                        '/neo-page-builder/header-fixed-modal',
+                        {type: $(elmt).hasClass('npb-headband-header-icon-container-save') ? 'save' : 'dots', uuid},
+                        (data, status) => {
+                            if (status === 'success') {
+                                this.displayChoices(data, elmt)
+                            } else {
+                                this.reportMessage('error', status)
+                            }
+                        }
+                    )
+                }
             }
         })
     }
@@ -159,13 +205,14 @@ export default class extends Controller {
      *
      * @param {string} url - The URL to send the AJAX request to.
      * @param {Object} json - The JSON data to send in the request body.
+     * @param {Element} elmt - The triggered button element.
      * @param {string|null} container - The DOM element selector where the response HTML should be appended to.
      *                                 If null, the response data will be passed to the displayChoices method instead.
      * @param {string|null} after - The DOM element selector after which the response HTML should be inserted.
      *                              This parameter is only used if container is not null.
      * @return {void}
      */
-    ajax(url, json, container = null, after = null, before = null) {
+    ajax(url, json, elmt,  container = null, after = null, before = null) {
         $.post(url, json,  (data, status) => {
             if (status === 'success') {
                 if (container !== null) {
@@ -178,7 +225,7 @@ export default class extends Controller {
                     }
                     this.orderSections()
                 } else {
-                    this.displayChoices(data)
+                    this.displayChoices(data, elmt)
                 }
             } else {
                 this.reportMessage('error', status)
@@ -200,14 +247,36 @@ export default class extends Controller {
      * Displays choices in a fixed modal on the page.
      *
      * @param {string} html - The HTML content to display in the fixed modal.
+     * @param {Element} elmt - The triggered button element.
      */
-    displayChoices(html) {
+    displayChoices(html, elmt) {
 
         $('#npb-wrapper').append(html)
 
         const width = $('.npb-fixed-modal').width();
-        $('.npb-fixed-modal').css({left: this.mousePosition.left - (width / 2), top: this.mousePosition.top})
-        this.modalPositionOnScroll()
+        const position = {
+            left: this.mousePosition.left - (width / 2),
+            top: this.mousePosition.top
+        }
+
+        if (this.mousePosition.left + width / 2 > $('#npb-wrapper').width()) {
+            position.left = $('#npb-wrapper').width() - width + this.sectionPadding
+            $('.npb-fixed-modal').removeClass('nbp-fixed-modal-leftside').addClass('nbp-fixed-modal-rightside')
+        }
+
+        if (this.mousePosition.left - width / 2 < this.sectionPadding * 2) {
+            position.left = this.sectionPadding
+            $('.npb-fixed-modal').addClass('nbp-fixed-modal-leftside').removeClass('nbp-fixed-modal-rightside')
+        }
+
+        const pad = $('#npb-fixed-modal-header-action').length > 0 ? 3 : 10
+        position['--npb-left-value'] = ($(elmt).offset().left - position.left + pad) + 'px'
+
+        $('.npb-fixed-modal')
+            .css(position)
+            .attr('data-ref', $(elmt).attr('id'))
+
+        this.modalPosition()
 
         $('.npb-fixed-modal-close-wrapper').off()
         $('.npb-fixed-modal-close-wrapper').on('click', () => {
@@ -216,13 +285,17 @@ export default class extends Controller {
             this.currentBlockBtn = null
             $(this.currentSectionBtn).prop('disabled', false)
             this.currentSectionBtn = null
+            $(this.currentHeaderBtn).prop('disabled', false)
+            this.currentHeaderBtn = null
         })
 
         $('.npb-fixed-modal-sections-choices-examples[data-model]').off()
         $('.npb-fixed-modal-sections-choices-examples[data-model]').on('click', (e) => {
+
             const model = $(e.currentTarget).data('model');
             $('.npb-fixed-modal').remove()
             $(this.currentSectionBtn).prop('disabled', false)
+            const elmt = this.currentSectionBtn
             this.currentSectionBtn = null
 
             const container = '#' + $(this.element)
@@ -240,6 +313,7 @@ export default class extends Controller {
                         ? 'special'
                         : 'standard'
                 },
+                elmt,
                 container,
                 $(this.element)
             )
@@ -255,7 +329,7 @@ export default class extends Controller {
                 .closest('.npb-blocks-wrapper')
                 .find('.npb-blocks-draggable-container')
                 .attr('id');
-
+            const elmt = this.currentBlockBtn
             this.currentBlockBtn = null
 
             this.ajax(
@@ -266,47 +340,67 @@ export default class extends Controller {
                         .closest('.npb-row-full')
                         .length > 0
                 },
+                elmt,
                 container
             )
         })
 
         $(window).on('resize', () => {
-            const npbContainerTop = $('#npb').offset().top
-            if ($('.npb-fixed-modal').length > 0 && this.currentBlockBtn !== null) {
-                const size = $(this.currentBlockBtn).offset()
-                $('.npb-fixed-modal').css({
+
+            if ($('.npb-fixed-modal').length > 0
+                && elmt !== null
+                && $(elmt).attr('id') === $('.npb-fixed-modal').attr('data-ref')
+            ) {
+
+                const npbContainerTop = $('#npb').offset().top
+                let size = $(elmt).offset()
+                const position = {
                     left: size.left - (width / 2) + this.sectionPadding,
                     top: size.top + this.sectionPadding - npbContainerTop
-                })
-            } else if ($('.npb-fixed-modal').length > 0 && this.currentSectionBtn !== null) {
-                const size = $(this.currentSectionBtn).offset()
-                $('.npb-fixed-modal').css({
-                    left: size.left - (width / 2) + this.sectionPadding,
-                    top: size.top + this.sectionPadding - npbContainerTop
-                })
+                }
+
+                if ($('#npb-fixed-modal-header-action').length > 0) {
+                    position.left -= 5
+                }
+
+                if (size.left + width / 2 > $('#npb-wrapper').width()) {
+                    position.left = $('#npb-wrapper').width() - width + this.sectionPadding
+                    $('.npb-fixed-modal').removeClass('nbp-fixed-modal-leftside').addClass('nbp-fixed-modal-rightside')
+                }
+
+                if (size.left - width / 2 < this.sectionPadding) {
+                    position.left = this.sectionPadding
+                    $('.npb-fixed-modal').addClass('nbp-fixed-modal-leftside').removeClass('nbp-fixed-modal-rightside')
+                }
+
+                const padLeft = $('#npb-fixed-modal-header-action').length > 0 ? 3 : 10
+                const padTop = $('#npb-fixed-modal-header-action').length > 0 ? 20 : 0
+
+                position.top -= padTop
+                position['--npb-left-value'] = ($(elmt).offset().left - position.left + padLeft) + 'px'
+
+                $('.npb-fixed-modal').css(position)
             }
-            this.modalPositionOnScroll()
         })
     }
 
     /**
-     * Adjusts the position of a modal on scroll.
      * The modal will be dynamically positioned either above or below the scroll target based on its visibility in the viewport.
      *
-     * @returns {void}
+     * @returns {void} - does not return a value
      */
-    modalPositionOnScroll() {
+    modalPosition() {
 
-        const modal = $('.npb-fixed-modal');
+        const modal = $('.npb-fixed-modal')
         if (modal.length > 0) {
-            const pageY = window.scrollY;
-            const windowHeight = window.innerHeight;
-            const modalPosY = $(modal).offset().top;
-            if (modalPosY - pageY > windowHeight / 2
+            const windowHeight = window.innerHeight
+            const modalPosY = $(modal).offset().top
+            const modalHeight = $(modal).height()
+            if (modalPosY + modalHeight > windowHeight
             ) {
-                $(modal).addClass('npb-fixed-modal-above-target');
+                $(modal).addClass('npb-fixed-modal-above-target')
             } else {
-                $(modal).removeClass('npb-fixed-modal-above-target');
+                $(modal).removeClass('npb-fixed-modal-above-target')
             }
         }
     }

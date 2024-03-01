@@ -158,4 +158,21 @@ class BuilderController extends AbstractController
             throw $this->createNotFoundException('Modal type does not exist or info is missing in parameters.');
         }
     }
+
+    #[Route('/header-fixed-modal', name: 'header_modal')]
+    public function header_modal(Request $request): Response
+    {
+        if ($request->request->has('type')
+            && in_array($request->get('type'), ['save', 'exchange', 'trash', 'dots'], true)
+            && $request->request->has('uuid')
+        ) {
+            $uuid = $request->get('uuid');
+            return $this->render(
+                sprintf('builder/components/modals/header/%s.html.twig', $request->get('type')),
+                compact('uuid')
+            );
+        } else {
+            throw $this->createNotFoundException('Modal selection does not exist.');
+        }
+    }
 }

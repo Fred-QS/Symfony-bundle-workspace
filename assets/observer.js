@@ -74,6 +74,11 @@ function initDomObserver() {
                                 && $(event.target).closest('.npb-add-block:disabled').length === 0) {
                                 $('.npb-add-block').attr('disabled', false);
                             }
+
+                            if (!$(event.target).is('.npb-headband-header-icon-container')
+                                && $(event.target).closest('.npb-headband-header-icon-container:disabled').length === 0) {
+                                $('.npb-headband-header-icon-container').attr('disabled', false);
+                            }
                         }
                     });
                 } else {
@@ -85,13 +90,6 @@ function initDomObserver() {
         $('#display-page-settings').on('click', function (){
             console.log(page)
         })
-
-        $(window).on('scroll', function () {
-            clearTimeout(fixedModalTimeout);
-            fixedModalTimeout = setTimeout(function() {
-                modalPositionOnScroll();
-            }, 50)
-        });
 
         $(window).on('resize', function () {
             interactiveHeaderInputPosition();
@@ -218,30 +216,6 @@ function tooltipPosition(event) {
 }
 
 /**
- * Checks and updates the position of a fixed modal on scroll event.
- *
- * @function modalPositionOnScroll
- * @description This function checks if a fixed modal element is present and updates its position based on the scroll position of the page.
- *
- * @returns {void} This function does not return a value.
- */
-function modalPositionOnScroll() {
-
-    const modal = $('.npb-fixed-modal');
-    if (modal.length > 0) {
-        const pageY = window.scrollY;
-        const windowHeight = window.innerHeight;
-        const modalPosY = $(modal).offset().top;
-        if (modalPosY - pageY > windowHeight / 2
-        ) {
-            $(modal).addClass('npb-fixed-modal-above-target');
-        } else {
-            $(modal).removeClass('npb-fixed-modal-above-target');
-        }
-    }
-}
-
-/**
  * Positions the interactive header input within the header container.
  *
  * This method calculates the width and position of the input element inside each interactive header container
@@ -312,6 +286,9 @@ function settingsListener() {
 
         $('#npb-resizable-modal-container').remove();
         $('#npb-wrapper').removeAttr('style');
+
+        $('.npb-fixed-modal').remove();
+        $('[class^="npb-headband"] button').prop('disabled', false)
 
         const type = $(this).data('title').includes('cog') ? 'settings' : 'revisions';
 
