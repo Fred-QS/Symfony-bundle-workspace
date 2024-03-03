@@ -1300,6 +1300,71 @@
     border-bottom: 1px solid var(--placeholder-bg-dark-color);
 }
 
+#npb-resizable-modal-header-body {
+    padding: 20px;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.npm-modal-text {
+    margin: 0 0 20px 0;
+    width: 100%;
+    font-size: 14px;
+}
+
+.npb-revisions-list {
+    margin: 0;
+    list-style: none;
+    width: 100%;
+    padding: 0;
+}
+
+.npb-revision {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 4px;
+    background-color: var(--warning-color);
+    color: var(--text-color);
+    position: relative;
+    z-index: 1;
+    transition: background-color linear 0.2s;
+}
+
+.npb-revision span {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.npb-revision:active, .npb-revision.active {
+    background-color: var(--section-color);
+}
+
+.npb-revision.active:before {
+    position: absolute;
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 448 512'%3E%3Cpath fill='%23fff' stroke='%23fff' stroke-width='2em' d='M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z'/%3E%3C/svg%3E");
+    width: 38px;
+    height: 36px;
+    left: 0;
+    top: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+}
+
+.npb-revision:not(:last-child) {
+    margin-bottom: 10px;
+}
+
 @media only screen and (min-width: 781px) {
 
     .npb-row-special-blocks-first .npb-block,

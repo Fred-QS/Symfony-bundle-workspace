@@ -5,7 +5,7 @@
     <div id="npb-headband-header-master">
         {%  set icons = ['add', 'save', 'exchange', 'clock', 'trash', 'cog', 'dots'] %}
         {% for icon in icons %}
-            <button id="npb-headband-header-icon-{{ get_timestamp() }}" type="button" class="npb-headband-header-icon-container npb-headband-header-icon-container-{{ icon }}{% if icon in ['cog', 'clock'] %} npb-headband-header-icon-container-draggable-modal{% endif %}" data-title="{{ icon }} master">
+            <button id="npb-headband-header-icon-{{ get_timestamp() }}" type="button" class="npb-headband-header-icon-container npb-headband-header-icon-container-{{ icon }}{% if icon in ['cog', 'clock'] %} npb-headband-header-icon-container-draggable-modal{% endif %}" data-title="{{ (icon ~ '.master')|trans }}">
                 {% include 'builder/components/icons/headband/' ~ icon ~ '.html.twig' %}
             </button>
         {% endfor %}

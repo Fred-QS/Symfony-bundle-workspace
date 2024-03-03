@@ -16,7 +16,7 @@ input, select {
     font-family: 'Arial', sans-serif;
 }
 
-#display-page-settings {
+.page-settings-button {
     margin: 20px 0 0 20px;
     display: flex;
     justify-content: center;
@@ -33,7 +33,7 @@ input, select {
     transition: background-color linear 0.2s;
 }
 
-#display-page-settings:active {
+.page-settings-button:active {
     background-color: var(--placeholder-bg-main-color);
 }
 

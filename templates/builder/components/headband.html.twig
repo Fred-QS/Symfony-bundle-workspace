@@ -1,18 +1,18 @@
 <div class="npb-headband npb-headband-{{ headbandType }}{% if headbandType == 'block' %} npb-headband-{{ headbandType }}-{{ blockType }}{% else %} npb-headband-interactive{% endif %}">
     <div class="npb-headband-header npb-headband-header-{{ headbandType }}">
-        <div class="npb-headband-header-icon-container npb-headband-header-icon-container-drag data-title="drag {{ headbandType }}">
+        <div class="npb-headband-header-icon-container npb-headband-header-icon-container-drag" data-title="{{ ('drag.' ~ headbandType)|trans }}">
             {% include 'builder/components/icons/headband/drag.html.twig' %}
         </div>
         {%  set icons = ['cog', 'duplicate', 'save', 'trash', 'dots'] %}
         {% for icon in icons %}
-            <button id="npb-headband-header-icon-{{ get_timestamp() }}" type="button" class="npb-headband-header-icon-container npb-headband-header-icon-container-{{ icon }}{% if icon == 'cog' %} npb-headband-header-icon-container-draggable-modal{% endif %}" data-title="{{ icon }} {{ headbandType }}">
+            <button id="npb-headband-header-icon-{{ get_timestamp() }}" type="button" class="npb-headband-header-icon-container npb-headband-header-icon-container-{{ icon }}{% if icon == 'cog' %} npb-headband-header-icon-container-draggable-modal{% endif %}" data-title="{{ (icon ~ '.' ~ headbandType)|trans }}">
                 {% include 'builder/components/icons/headband/' ~ icon ~ '.html.twig' %}
             </button>
         {% endfor %}
     </div>
-    <input spellcheck="false" autocomplete="off" type="text" class="npb-headband-input npb-headband-input-{{ headbandType }}{% if headbandType != 'block' %} npb-headband-input-interactive{% endif %}" value="{% if headbandType != 'block' %}{{ headbandType|capitalize }}{% else %}{{ pattern|humanize_chars }}{% endif %}">
+    <input spellcheck="false" autocomplete="off" type="text" class="npb-headband-input npb-headband-input-{{ headbandType }}{% if headbandType != 'block' %} npb-headband-input-interactive{% endif %}" value="{% if headbandType != 'block' %}{{ headbandType|trans|capitalize }}{% else %}{{ pattern|humanize_chars }}{% endif %}">
     {% if headbandType != 'block' %}
-        <div class="npb-headband-header-expand npb-headband-header-expand-{{ headbandType }}" aria-expanded="true">
+        <div class="npb-headband-header-expand npb-headband-header-expand-{{ headbandType }}" aria-expanded="true" data-title="{{ 'Expand'|trans }}">
             {% include 'builder/components/icons/headband/chevron.html.twig' %}
         </div>
     {% endif %}

@@ -61,6 +61,8 @@ class FiltersExtension extends AbstractExtension
         return [
             new TwigFunction('get_timestamp', [FiltersRuntime::class, 'getTimeStamp']),
             new TwigFunction('get_block_choices', [FiltersRuntime::class, 'getBlockChoices']),
+            new TwigFunction('get_revisions', [FiltersRuntime::class, 'getRevisions']),
+            new TwigFunction('parse_timestamp', [FiltersRuntime::class, 'parseTimestamp']),
         ];
     }
 }

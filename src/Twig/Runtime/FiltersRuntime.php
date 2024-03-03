@@ -5,6 +5,8 @@ namespace App\Twig\Runtime;
 use App\IntegrityChecks\Constants;
 use Twig\Extension\RuntimeExtensionInterface;
 use Symfony\Component\Uid\Uuid;
+use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\Request;
 
 class FiltersRuntime implements RuntimeExtensionInterface
 {
@@ -48,5 +50,28 @@ class FiltersRuntime implements RuntimeExtensionInterface
     {
         $cleaner = str_replace(['-', '_'], ' ', $string);
         return ucfirst($cleaner);
+    }
+
+    /**
+     * Retrieves the revisions from the specified JSON string.
+     *
+     * @param string|null $revisions The JSON string containing the revisions.
+     * @return array|null The array of revisions or null if the JSON is invalid.
+     */
+    public function getRevisions(string|null $revisions): array|null
+    {
+        return json_decode($revisions, true);
+    }
+
+    public function parseTimestamp(string $timestamp, string $locale): string
+    {
+        $year = substr($timestamp, 0, 4);
+        $month = substr($timestamp, 4, 2);
+        $date = substr($timestamp, 6, 2);
+        $hour = substr($timestamp, 8, 2);
+        $minutes = substr($timestamp, 10, 2);
+        $seconds = substr($timestamp, 12, 2);
+        $formatted = sprintf('%s-%s-%s %s:%s:%s', $year, $month, $date, $hour, $minutes, $seconds);
+        return lcfirst(Carbon::parse($formatted)->locale($locale)->calendar());
     }
 }

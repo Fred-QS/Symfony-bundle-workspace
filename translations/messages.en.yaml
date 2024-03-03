@@ -1,0 +1,42 @@
+add:
+  master: Add template
+save:
+  master: Save template
+  row: Save container
+  section: Save section
+  block: Save block
+duplicate:
+  row: Duplicate container
+  section: Duplicate section
+  bloc: Duplicate block
+exchange:
+  master: Import/Export
+clock:
+  master: Revisions
+trash:
+  master: Delete template
+  row: Delete container
+  section: Delete section
+  block: Delete block
+cog:
+  master: Template settings
+  row: Container settings
+  section: Section settings
+  block: Bloc settings
+dots:
+  master: Information
+  row: Information
+  section: Information
+  block: Information
+row: container
+modal_header:
+  sidebar: Sidebar
+  fullscreen: Fullscreen
+  details: Information
+modal_footer:
+  check: Validate
+  forward: Forward
+  backward: Backward
+  close: Close
+Insert row: Insert container
+Create new row: Create new container

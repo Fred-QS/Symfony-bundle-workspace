@@ -3,9 +3,10 @@ let fixedModalTimeout;
 let page = {data: {}, rows: [], entitiesSettings: {}};
 let revisions = [];
 let startX, startY, startWidth, startHeight;
-let resizedModalOffset = {top: window.innerHeight - 600, left: window.innerWidth - 500};
+let resizedModalOffset = {top: 100, left: null};
 let resizedModalSize = {height: 'auto', width: 480};
 let resizableModalDisplayMode = 'standalone';
+let currentRevision = timestamp('encode');
 
 /**
  * Initializes the DOM observer to detect and handle changes in the DOM.
@@ -89,12 +90,20 @@ function initDomObserver() {
 
         $('#display-page-settings').on('click', function (){
             console.log(page)
+            downloadObjectAsJson(page, 'page');
+        })
+
+        $('#upload-page-settings').on('click', function (){
+            importConfigFromFile()
+            //downloadObjectAsJson(page, 'page');
         })
 
         $(window).on('resize', function () {
             interactiveHeaderInputPosition();
             autoResizeResizableModal();
         });
+
+        setRevision('page');
     });
 }
 
@@ -292,12 +301,14 @@ function settingsListener() {
 
         const type = $(this).data('title').includes('cog') ? 'settings' : 'revisions';
 
+        let elementType = 'page';
+        let elementID = null;
+        let elementPattern = null;
+        let data = null;
+        let friendlyName = 'Page';
+        let info = {};
+
         if (type === 'settings') {
-            let elementType = 'page';
-            let elementID = null;
-            let elementPattern = null;
-            let data = null;
-            let friendlyName = 'Page';
 
             if ($(this).closest('.npb-block').length > 0) {
 
@@ -325,76 +336,84 @@ function settingsListener() {
             }
 
             let entitySettings = page.entitiesSettings[elementID] ?? null;
-            let info = {elementID, elementType, elementPattern, data, friendlyName, entitySettings};
+            info = {elementID, elementType, elementPattern, data, friendlyName, entitySettings};
 
-            $.post(
-                '/neo-page-builder/resizable-modal',
-                {
-                    type: type,
-                    info: info,
-                    mode: resizableModalDisplayMode
-                },
-                function (data, status) {
-                    if (status === 'success') {
+        } else if (type === 'revisions') {
 
-                        $('#npb').append($(data));
+            let entitySettings = page.entitiesSettings[elementID] ?? null;
+            data = JSON.stringify(getRevisions('page'));
+            info = {elementID, elementType, elementPattern, data, friendlyName, entitySettings, currentRevision};
+        }
 
-                        if (resizableModalDisplayMode === 'sidebar') {
-                            const modalWidth = $('#npb-resizable-modal-container').width();
-                            $('#npb-wrapper').css({width: 'calc(100% - ' + modalWidth + 'px)'});
+        $.post(
+            '/neo-page-builder/resizable-modal',
+            {
+                type: type,
+                info: info,
+                mode: resizableModalDisplayMode
+            },
+            function (data, status) {
+                if (status === 'success') {
+
+                    $('#npb').append($(data));
+
+                    if (resizableModalDisplayMode === 'sidebar') {
+                        const modalWidth = $('#npb-resizable-modal-container').width();
+                        $('#npb-wrapper').css({width: 'calc(100% - ' + modalWidth + 'px)'});
+                    }
+
+                    $('#npb-resizable-modal-container').css({
+                        top: resizedModalOffset.top,
+                        left: resizedModalOffset.left === null
+                            ? window.innerWidth - $('#npb-resizable-modal-container').width() - 20
+                            : resizedModalOffset.left,
+                        width: resizedModalSize.width,
+                        height: resizedModalSize.height,
+                    });
+
+                    $('#npb-resizable-modal-container').draggable({
+                        containment: 'window',
+                        handle: '#npb-resizable-modal-header',
+                        iframeFix: true,
+                        cancel: '#npb-resizable-modal-container:not([data-mode="standalone"])',
+                        stop: function( event, ui ) {
+                            resizedModalOffset.left = Math.max(0, ui.position.left);
+                            resizedModalOffset.top = Math.max(0, ui.position.top);
+                        }
+                    });
+
+                    $('#npb-resizable-modal-resizer').off();
+                    $('#npb-resizable-modal-resizer').on('mousedown', function (e) {
+
+                        if ($('#npb-resizable-modal-container').attr('data-mode') !== 'fullscreen') {
+
+                            $(this).addClass('npb-resizable-modal-resizer-show');
+
+                            startX = e.clientX;
+                            startY = e.clientY;
+                            startWidth = parseInt($('#npb-resizable-modal-container').width(), 10);
+                            startHeight = parseInt($('#npb-resizable-modal-container').height(), 10);
+
+                            $(document).on('mousemove', startDrag);
                         }
 
-                        $('#npb-resizable-modal-container').css({
-                            top: resizedModalOffset.top,
-                            left: resizedModalOffset.left,
-                            width: resizedModalSize.width,
-                            height: resizedModalSize.height,
-                        });
-
-                        $('#npb-resizable-modal-container').draggable({
-                            containment: 'window',
-                            handle: '#npb-resizable-modal-header',
-                            iframeFix: true,
-                            cancel: '#npb-resizable-modal-container:not([data-mode="standalone"])',
-                            stop: function( event, ui ) {
-                                resizedModalOffset.left = Math.max(0, ui.position.left);
-                                resizedModalOffset.top = Math.max(0, ui.position.top);
-                            }
-                        });
-
-                        $('#npb-resizable-modal-resizer').off();
-                        $('#npb-resizable-modal-resizer').on('mousedown', function (e) {
-
-                            if ($('#npb-resizable-modal-container').attr('data-mode') !== 'fullscreen') {
-
-                                $(this).addClass('npb-resizable-modal-resizer-show');
-
-                                startX = e.clientX;
-                                startY = e.clientY;
-                                startWidth = parseInt($('#npb-resizable-modal-container').width(), 10);
-                                startHeight = parseInt($('#npb-resizable-modal-container').height(), 10);
-
-                                $(document).on('mousemove', startDrag);
-                            }
-
-                            $(document).on('mouseup', function () {
-                                $('#npb-resizable-modal-resizer').removeClass('npb-resizable-modal-resizer-show');
-                                $(document).off('mousemove');
-                                $(document).off('mouseup');
-                                $(document).on('mousemove', function (event) {
-                                    tooltipPosition(event);
-                                });
+                        $(document).on('mouseup', function () {
+                            $('#npb-resizable-modal-resizer').removeClass('npb-resizable-modal-resizer-show');
+                            $(document).off('mousemove');
+                            $(document).off('mouseup');
+                            $(document).on('mousemove', function (event) {
+                                tooltipPosition(event);
                             });
                         });
+                    });
 
-                        resizableModalListeners();
+                    resizableModalListeners();
 
-                    } else {
-                        reportMessage('error', data);
-                    }
+                } else {
+                    reportMessage('error', data);
                 }
-            );
-        }
+            }
+        );
     });
 }
 
@@ -635,4 +654,130 @@ function resizableModalListeners() {
         $('#npb-tooltip').remove();
         $('#npb-wrapper').removeAttr('style');
     });
+}
+
+/**
+ * Downloads the given JavaScript object as JSON file.
+ *
+ * @param {object} exportObj - The object to be exported as JSON.
+ * @param {string} exportName - The name of the exported file (without file extension).
+ * @return {void} - This function does not return anything.
+ */
+function downloadObjectAsJson(exportObj, exportName){
+    let json = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+    let link = '<a style="display: none;" id="npb-config-downloader"></a>';
+    $(document.body).append(link);
+    $('#npb-config-downloader').attr('href', json).attr('download', exportName + '.json');
+    $('#npb-config-downloader')[0].click();
+    $('#npb-config-downloader')[0].remove();
+}
+
+/**
+ * Opens a file dialog to import a configuration file.
+ *
+ * @function importConfigFromFile
+ * @returns {void}
+ */
+function importConfigFromFile() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.json';
+    fileInput.addEventListener('change', handleFileSelect);
+    fileInput.click();
+}
+
+/**
+ * Handles file selection event.
+ *
+ * @param {Event} event - The file selection event object.
+ * @return {void}
+ */
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const contents = e.target.result;
+        page = JSON.parse(contents);
+    };
+    reader.readAsText(file);
+}
+
+/**
+ * Sets the revision for a given key in the local storage.
+ * If the key does not exist in the local storage, a new entry will be created.
+ * The maximum number of revisions is limited to 9. If more revisions exist, the oldest revision will be removed.
+ * Each revision contains a date and settings object.
+ *
+ * @param {string} key - The key to set the revision for.
+ * @return {void}
+ */
+function setRevision(key) {
+
+    //window.localStorage.clear();
+    if (window.localStorage.getItem('neo-page-builder') === null) {
+        let json = {};
+        json[key] = [];
+        window.localStorage.setItem('neo-page-builder', JSON.stringify(json));
+    }
+
+    let revisions = JSON.parse(window.localStorage.getItem('neo-page-builder'));
+    if (revisions[key] === undefined) {
+        revisions[key] = [];
+    }
+
+    let currentRevisions = [];
+    for (let i = 0; i < 9; i++) {
+        if (revisions[key][i]) {
+            currentRevisions.push(revisions[key][i]);
+        }
+    }
+
+    revisions[key] = currentRevisions;
+    currentRevision = {date: timestamp('encode'), settings: page};
+    revisions[key].unshift(currentRevision);
+    window.localStorage.setItem('neo-page-builder', JSON.stringify(revisions));
+}
+
+/**
+ * Retrieves the revisions of a given key from localStorage.
+ *
+ * @param {string} key - The key used to store the revisions in localStorage.
+ * @return {null|any} - The revisions stored under the specified key, or null if the key is not found.
+ */
+function getRevisions(key) {
+    let storage = window.localStorage.getItem('neo-page-builder');
+    storage = storage !== null ? JSON.parse(storage) : null;
+    return storage[key] !== undefined ? storage[key] : null;
+}
+
+/**
+ * Generates a timestamp based on given mode and optional data.
+ *
+ * @param {string} mode - The mode can be 'encode' or 'decode'
+ * @param {string|null} [data=null] - Optional data required for decoding timestamp
+ * @return {string|null} - The generated timestamp or null if mode is invalid
+ */
+function timestamp(mode, data = null) {
+
+    if (mode === 'encode') {
+        let d = new Date;
+        return d.getFullYear()
+            + ('0' + (d.getMonth() + 1)).slice(-2)
+            + ('0' + d.getDate()).slice(-2)
+            + ('0' + d.getHours()).slice(-2)
+            + ('0' + d.getMinutes()).slice(-2)
+            + ('0' + d.getSeconds()).slice(-2);
+    }
+
+    if (data !== null && mode === 'decode') {
+        const year = data.slice(0, 4);
+        const month = data.slice(4, 6);
+        const date = data.slice(6, 8);
+        const hour = data.slice(8, 10);
+        const minutes = data.slice(10, 12);
+        const seconds = data.slice(12);
+        return year + '-' + month + '-' + date + ' ' + hour + ':' + minutes + ':' + seconds;
+    }
+
+    return null;
 }

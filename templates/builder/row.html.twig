@@ -5,13 +5,13 @@
         {% set headbandType = 'row' %}
         {% include 'builder/components/headband.html.twig' %}
         <div class="npb-initial-add-section-btn">
-            <button id="npb-add-section-{{ get_timestamp() }}" type="button" class="npb-add-section" data-title="Create new section">
+            <button id="npb-add-section-{{ get_timestamp() }}" type="button" class="npb-add-section" data-title="{{ 'Create new section'|trans }}">
                 <span class="npb-button-bg"></span>
                 <span class="npb-button-symbol">+</span>
             </button>
         </div>
 
-        <button id="npb-add-row-{{ get_timestamp() }}" type="button" class="npb-add-row" data-title="Create new row">
+        <button id="npb-add-row-{{ get_timestamp() }}" type="button" class="npb-add-row" data-title="{{ 'Create new row'|trans }}">
             <span class="npb-button-bg"></span>
             <span class="npb-button-symbol">+</span>
         </button>
@@ -26,13 +26,13 @@
         {% set width = 100 %}
         <div class="npb-blocks-wrapper" style="width: {{ width }}%;">
             <div id="npb-blocks-draggable-container-{{ timestamp }}" class="npb-blocks-draggable-container"></div>
-            <button id="npb-add-block-{{ get_timestamp() }}" type="button" class="npb-add-block" data-title="Create new block">
+            <button id="npb-add-block-{{ get_timestamp() }}" type="button" class="npb-add-block" data-title="{{ 'Create new block'|trans }}">
                 <span class="npb-button-bg"></span>
                 <span class="npb-button-symbol">+</span>
             </button>
         </div>
 
-        <button id="npb-add-row-{{ get_timestamp() }}" type="button" class="npb-add-row" data-title="Create new row">
+        <button id="npb-add-row-{{ get_timestamp() }}" type="button" class="npb-add-row" data-title="{{ 'Create new row'|trans }}">
             <span class="npb-button-bg"></span>
             <span class="npb-button-symbol">+</span>
         </button>
@@ -48,7 +48,7 @@
             {% if item.type == 'section' %}
                 <div id="npb-row-{{ timestamp }}" data-uuid="{{ timestamp }}" data-pattern="{{ rowType }}" class="npb-row-special-section npb-row-section-draggable" style="width: {{ item.size }}%;">
                     <div class="npb-initial-add-section-btn">
-                        <button id="npb-add-section-{{ get_timestamp() }}" type="button" class="npb-add-section" data-title="Create new section">
+                        <button id="npb-add-section-{{ get_timestamp() }}" type="button" class="npb-add-section" data-title="{{ 'Create new section'|trans }}">
                             <span class="npb-button-bg"></span>
                             <span class="npb-button-symbol">+</span>
                         </button>
@@ -59,7 +59,7 @@
                     {% set width = 100 %}
                     <div class="npb-blocks-wrapper" style="width: {{ width }}%;">
                         <div id="npb-blocks-draggable-container-{{ timestamp }}" class="npb-blocks-draggable-container"></div>
-                        <button id="npb-add-block-{{ get_timestamp() }}" type="button" class="npb-add-block" data-title="Create new block">
+                        <button id="npb-add-block-{{ get_timestamp() }}" type="button" class="npb-add-block" data-title="{{ 'Create new block'|trans }}">
                             <span class="npb-button-bg"></span>
                             <span class="npb-button-symbol">+</span>
                         </button>
@@ -68,7 +68,7 @@
             {% endif %}
         {% endfor %}
 
-        <button id="npb-add-row-{{ get_timestamp() }}" type="button" class="npb-add-row" data-title="Create new row">
+        <button id="npb-add-row-{{ get_timestamp() }}" type="button" class="npb-add-row" data-title="{{ 'Create new row'|trans }}">
             <span class="npb-button-bg"></span>
             <span class="npb-button-symbol">+</span>
         </button>
