@@ -1,0 +1,94 @@
+services:
+    php:
+        container_name: page_builder_php
+        build:
+            context: ./
+            dockerfile: ./docker/php/Dockerfile
+            target: page_builder_php
+        depends_on:
+            - mysql
+        environment:
+            - PHP_DATE_TIMEZONE=${PHP_DATE_TIMEZONE:-UTC}
+        volumes:
+            - ./app:/srv/page_builder:rw,cached
+            - ~/.composer:/.composer  # for Composer cache
+
+    mysql:
+        image: percona
+        container_name: page_builder_mysql
+        restart: always
+        environment:
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-nopassword}
+            - MYSQL_DATABASE=page_builder
+            - MYSQL_USER=page_builder
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD:-nopassword}
+        volumes:
+            - mysql-data:/var/lib/mysql:rw
+
+    adminer:
+        container_name: page_builder_adminer
+        depends_on:
+            - mysql
+        image: adminer
+
+    nodejs:
+        container_name: page_builder_nodejs
+        build:
+            context: ./
+            dockerfile: ./docker/nodejs/Dockerfile
+            target: page_builder_nodejs
+        depends_on:
+            - php
+        environment:
+            - GULP_ENV=dev
+            - PHP_HOST=php
+            - PHP_PORT=9000
+        volumes:
+            - ./app:/srv/page_builder:rw,cached
+            - ./app/public:/srv/page_builder/public:rw,delegated
+            - ~/.cache:/home/node/.cache
+            - ~/.yarn:/home/node/.yarn
+
+    nginx:
+        container_name: page_builder_nginx
+        build:
+            context: ./
+            dockerfile: ./docker/nginx/Dockerfile
+            target: page_builder_nginx
+        depends_on:
+            - php
+            - nodejs # to ensure correct build order
+        security_opt:
+            - no-new-privileges:true
+        volumes:
+            - ./app/public:/srv/page_builder/public:ro
+
+    mailer:
+        container_name: page_builder_mailer
+        image: jeanberu/mailcatcher
+
+    traefik-proxy:
+        image: traefik:v2.11
+        container_name: page_builder_traefik
+        restart: unless-stopped
+        hostname: traefik
+        security_opt:
+            - no-new-privileges:true
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - ./docker/traefik/config/static.yml:/etc/traefik/traefik.yml:ro
+            - ./docker/traefik/config/dynamic.yml:/etc/traefik/dynamic.yml:ro
+            - ./docker/traefik/certificates:/etc/traefik/certificates
+        networks:
+            - page_builder
+
+volumes:
+    mysql-data:
+
+networks:
+    default:
+    page_builder:
+        external: true

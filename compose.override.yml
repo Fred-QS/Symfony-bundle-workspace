@@ -1,0 +1,58 @@
+services:
+    mysql:
+        ports:
+            - 3307:3306
+
+    adminer:
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=page_builder"
+            - "traefik.http.routers.adminer.entrypoints=https"
+            - "traefik.http.routers.adminer.rule=Host(`adminer.docker.localhost`)"
+            - "traefik.http.routers.adminer.tls=true"
+        ports:
+            - 8089:8080
+        networks:
+            default:
+            page_builder:
+                aliases:
+                    - "adminer.docker.localhost"
+
+    nodejs:
+        ports:
+            - 35730:35729
+
+    nginx:
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=page_builder"
+            - "traefik.http.routers.page-builder.entrypoints=https"
+            - "traefik.http.routers.page-builder.rule=Host(`page-builder.docker.localhost`)"
+            - "traefik.http.routers.page-builder.tls=true"
+        networks:
+            default:
+            page_builder:
+                aliases:
+                    - "page_builder.docker.localhost"
+
+    mailer:
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=page_builder"
+            - "traefik.http.routers.mailer.entrypoints=https"
+            - "traefik.http.routers.mailer.rule=Host(`mailer.docker.localhost`)"
+            - "traefik.http.routers.mailer.tls=true"
+            - "traefik.http.services.mailer.loadbalancer.server.port=1080"
+        ports:
+            - 1025:1025
+            - 1080:80
+        networks:
+            default:
+            page_builder:
+                aliases:
+                    - "mailer.docker.localhost"
+
+    traefik-proxy:
+        ports:
+            - 80:80
+            - 443:443
