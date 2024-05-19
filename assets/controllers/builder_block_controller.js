@@ -182,6 +182,13 @@ export default class extends Controller {
 
         this.modalPosition()
 
+        $('.npb-fixed-modal-close-wrapper').off()
+        $('.npb-fixed-modal-close-wrapper').on('click', () => {
+            $('.npb-fixed-modal').remove()
+            $(this.currentHeaderBtn).prop('disabled', false)
+            this.currentHeaderBtn = null
+        })
+
         $(window).on('resize', () => {
 
             if ($('.npb-fixed-modal').length > 0

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="fr" target-language="fr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="J_teUVB" resname="updated">
+        <source>updated</source>
+        <target>Mise à jour</target>
+      </trans-unit>
+      <trans-unit id="1Fi.UiY" resname="revisions.text">
+        <source>revisions.text</source>
+        <target>Choisissez quelle révision vous souhaiter appliquer au page builder en cliquant dessus puis en validant grâce au bouton de confirmation. Nous vous conseillons d'exporter les paramètres avant de procéder.</target>
+      </trans-unit>
+      <trans-unit id="n_bx.by" resname="revisions.name">
+        <source>revisions.name</source>
+        <target>Révisions de %name%</target>
+      </trans-unit>
+      <trans-unit id="tYrlfM1" resname="fullscreen">
+        <source>fullscreen</source>
+        <target>Plein écran</target>
+      </trans-unit>
+      <trans-unit id="fUxciJT" resname="special">
+        <source>special</source>
+        <target>Spécial</target>
+      </trans-unit>
+      <trans-unit id="TKFfGJn" resname="add.master">
+        <source>add.master</source>
+        <target>Ajouter un modèle</target>
+      </trans-unit>
+      <trans-unit id="vO6BXEB" resname="save.master">
+        <source>save.master</source>
+        <target>Enregistrer le modèle</target>
+      </trans-unit>
+      <trans-unit id="BuUeP63" resname="save.row">
+        <source>save.row</source>
+        <target>Enregistrer le conteneur</target>
+      </trans-unit>
+      <trans-unit id="Ehy.N4r" resname="save.section">
+        <source>save.section</source>
+        <target>Enregistrer la section</target>
+      </trans-unit>
+      <trans-unit id="UMXl.MK" resname="save.block">
+        <source>save.block</source>
+        <target>Enregistrer le bloc</target>
+      </trans-unit>
+      <trans-unit id="52jXAQ8" resname="save.simple">
+        <source>save.simple</source>
+        <target>Enregistrer</target>
+      </trans-unit>
+      <trans-unit id="ITfgrkw" resname="duplicate.row">
+        <source>duplicate.row</source>
+        <target>Dupliquer le conteneur</target>
+      </trans-unit>
+      <trans-unit id="BSXmmWu" resname="duplicate.section">
+        <source>duplicate.section</source>
+        <target>Dupliquer la section</target>
+      </trans-unit>
+      <trans-unit id="WMHxeqc" resname="duplicate.block">
+        <source>duplicate.block</source>
+        <target>Dupliquer le bloc</target>
+      </trans-unit>
+      <trans-unit id="Hdgfotu" resname="drag.row">
+        <source>drag.row</source>
+        <target>Déplacer le conteneur</target>
+      </trans-unit>
+      <trans-unit id="H7RwOZh" resname="drag.section">
+        <source>drag.section</source>
+        <target>Déplacer la section</target>
+      </trans-unit>
+      <trans-unit id="SrJynMZ" resname="drag.block">
+        <source>drag.block</source>
+        <target>Déplacer le bloc</target>
+      </trans-unit>
+      <trans-unit id="ipqKvyh" resname="exchange.master">
+        <source>exchange.master</source>
+        <target>Import/Export</target>
+      </trans-unit>
+      <trans-unit id="QeEX6Cx" resname="clock.master">
+        <source>clock.master</source>
+        <target>Révisions</target>
+      </trans-unit>
+      <trans-unit id="PhJ5biz" resname="trash.master">
+        <source>trash.master</source>
+        <target>Supprimer le modèle</target>
+      </trans-unit>
+      <trans-unit id="KuIjlEs" resname="trash.row">
+        <source>trash.row</source>
+        <target>Supprimer le conteneur</target>
+      </trans-unit>
+      <trans-unit id="ufAfAj_" resname="trash.section">
+        <source>trash.section</source>
+        <target>Supprimer la section</target>
+      </trans-unit>
+      <trans-unit id="TL.1TXz" resname="trash.block">
+        <source>trash.block</source>
+        <target>Supprimer le bloc</target>
+      </trans-unit>
+      <trans-unit id="djE5XxQ" resname="cog.master">
+        <source>cog.master</source>
+        <target>Paramètres du modèle</target>
+      </trans-unit>
+      <trans-unit id="MXw_Uzt" resname="cog.row">
+        <source>cog.row</source>
+        <target>Paramètres du conteneur</target>
+      </trans-unit>
+      <trans-unit id="YQs6pL0" resname="cog.section">
+        <source>cog.section</source>
+        <target>Paramètres de la section</target>
+      </trans-unit>
+      <trans-unit id="NYYPjFh" resname="cog.block">
+        <source>cog.block</source>
+        <target>Paramètres du bloc</target>
+      </trans-unit>
+      <trans-unit id="OcvFqN8" resname="dots.master">
+        <source>dots.master</source>
+        <target>Informations</target>
+      </trans-unit>
+      <trans-unit id="CIKGowa" resname="dots.row">
+        <source>dots.row</source>
+        <target>Informations</target>
+      </trans-unit>
+      <trans-unit id="H8uWY79" resname="dots.section">
+        <source>dots.section</source>
+        <target>Informations</target>
+      </trans-unit>
+      <trans-unit id="I1YuJVK" resname="dots.block">
+        <source>dots.block</source>
+        <target>Informations</target>
+      </trans-unit>
+      <trans-unit id="Y0do2uF" resname="row">
+        <source>row</source>
+        <target>conteneur</target>
+      </trans-unit>
+      <trans-unit id="P7RWI8s" resname="section">
+        <source>section</source>
+        <target>section</target>
+      </trans-unit>
+      <trans-unit id="SWrKgOT" resname="block">
+        <source>block</source>
+        <target>bloc</target>
+      </trans-unit>
+      <trans-unit id="YZdZVQP" resname="delete">
+        <source>delete</source>
+        <target>Supprimer</target>
+      </trans-unit>
+      <trans-unit id="IxnLoEd" resname="name.settings">
+        <source>name.settings</source>
+        <target>paramètres de %name%</target>
+      </trans-unit>
+      <trans-unit id="IQKmbOw" resname="modal.header.sidebar">
+        <source>modal.header.sidebar</source>
+        <target>Barre latérale</target>
+      </trans-unit>
+      <trans-unit id="DMBQ_zy" resname="modal.header.fullscreen">
+        <source>modal.header.fullscreen</source>
+        <target>Plein écran</target>
+      </trans-unit>
+      <trans-unit id="xdPVtls" resname="modal.header.details">
+        <source>modal.header.details</source>
+        <target>Informations</target>
+      </trans-unit>
+      <trans-unit id="rzAWC4E" resname="modal.footer.check">
+        <source>modal.footer.check</source>
+        <target>Valider</target>
+      </trans-unit>
+      <trans-unit id="ZnGhi78" resname="modal.footer.forward">
+        <source>modal.footer.forward</source>
+        <target>En avant</target>
+      </trans-unit>
+      <trans-unit id="lAXlciL" resname="modal.footer.backward">
+        <source>modal.footer.backward</source>
+        <target>En arrière</target>
+      </trans-unit>
+      <trans-unit id="alB8b8N" resname="modal.footer.close">
+        <source>modal.footer.close</source>
+        <target>Fermer</target>
+      </trans-unit>
+      <trans-unit id="v0KqlvI" resname="insert.row">
+        <source>insert.row</source>
+        <target>Insérer un conteneur</target>
+      </trans-unit>
+      <trans-unit id="GaZ5boC" resname="insert.section">
+        <source>insert.section</source>
+        <target>Insérer une section</target>
+      </trans-unit>
+      <trans-unit id="WYvJQ5X" resname="insert.block">
+        <source>insert.block</source>
+        <target>Insérer un bloc</target>
+      </trans-unit>
+      <trans-unit id="143pJah" resname="expand">
+        <source>expand</source>
+        <target>Développer</target>
+      </trans-unit>
+      <trans-unit id="Pn.n55o" resname="create.new.row">
+        <source>create.new.row</source>
+        <target>Créer un nouveau conteneur</target>
+      </trans-unit>
+      <trans-unit id="2F6FDgF" resname="create.new.section">
+        <source>create.new.section</source>
+        <target>Créer une nouvelle section</target>
+      </trans-unit>
+      <trans-unit id="_wT4Q.1" resname="create.new.block">
+        <source>create.new.block</source>
+        <target>Créer un nouveau bloc</target>
+      </trans-unit>
+      <trans-unit id="MXsywUN" resname="normal">
+        <source>normal</source>
+        <target>Normal</target>
+      </trans-unit>
+      <trans-unit id="sQEqlMW" resname="page.builder">
+        <source>page.builder</source>
+        <target>Constructeur de page</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

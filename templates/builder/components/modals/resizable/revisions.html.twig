@@ -1,13 +1,13 @@
 {% extends "builder/components/modals/resizable/settings.html.twig" %}
 
-{% block title %}{{ '%name% revisions'|trans({'%name%': info.friendlyName})|capitalize }}{% endblock %}
+{% block title %}{{ 'revisions.name'|trans({'%name%': info.friendlyName})|capitalize }}{% endblock %}
 
 {% block content %}
-    <p class="npm-modal-text">{{ 'Choose which revision you wish to apply to the page builder by clicking on it then validating using the confirmation button. We advise you to export the settings before proceeding'|trans }}.</p>
+    <p class="npm-modal-text">{{ 'revisions.text'|trans }}.</p>
     <ul class="npb-revisions-list">
     {% for revision in get_revisions(info.data) %}
         <li class="npb-revision{% if revision.date == info.currentRevision.date %} active{% endif %}" data-revision="{{ revision.date }}">
-            <span>{{ 'Updated'|trans }} {{ parse_timestamp(revision.date, app.request.locale) }}</span>
+            <span>{{ 'updated'|trans }} {{ parse_timestamp(revision.date, app.request.locale) }}</span>
         </li>
     {% endfor %}
     </ul>
