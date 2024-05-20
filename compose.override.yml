@@ -6,7 +6,7 @@ services:
     adminer:
         labels:
             - "traefik.enable=true"
-            - "traefik.docker.network=page_builder"
+            - "traefik.docker.network=symfony"
             - "traefik.http.routers.adminer.entrypoints=https"
             - "traefik.http.routers.adminer.rule=Host(`adminer.docker.localhost`)"
             - "traefik.http.routers.adminer.tls=true"
@@ -14,7 +14,7 @@ services:
             - 8089:8080
         networks:
             default:
-            page_builder:
+            symfony:
                 aliases:
                     - "adminer.docker.localhost"
 
@@ -25,20 +25,20 @@ services:
     nginx:
         labels:
             - "traefik.enable=true"
-            - "traefik.docker.network=page_builder"
-            - "traefik.http.routers.page-builder.entrypoints=https"
-            - "traefik.http.routers.page-builder.rule=Host(`page-builder.docker.localhost`)"
-            - "traefik.http.routers.page-builder.tls=true"
+            - "traefik.docker.network=symfony"
+            - "traefik.http.routers.symfony.entrypoints=https"
+            - "traefik.http.routers.symfony.rule=Host(`symfony.docker.localhost`)"
+            - "traefik.http.routers.symfony.tls=true"
         networks:
             default:
-            page_builder:
+            symfony:
                 aliases:
-                    - "page_builder.docker.localhost"
+                    - "symfony.docker.localhost"
 
     mailer:
         labels:
             - "traefik.enable=true"
-            - "traefik.docker.network=page_builder"
+            - "traefik.docker.network=symfony"
             - "traefik.http.routers.mailer.entrypoints=https"
             - "traefik.http.routers.mailer.rule=Host(`mailer.docker.localhost`)"
             - "traefik.http.routers.mailer.tls=true"
@@ -48,7 +48,7 @@ services:
             - 1080:80
         networks:
             default:
-            page_builder:
+            symfony:
                 aliases:
                     - "mailer.docker.localhost"
 

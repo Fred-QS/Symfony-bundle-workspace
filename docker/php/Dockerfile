@@ -2,7 +2,7 @@ ARG PHP_VERSION=8.3
 ARG COMPOSER_VERSION=2.7.2
 
 FROM composer:${COMPOSER_VERSION} AS composer
-FROM php:${PHP_VERSION}-fpm AS page_builder_php
+FROM php:${PHP_VERSION}-fpm AS symfony-test-php
 
 ENV PANTHER_NO_SANDBOX 1
 ENV PANTHER_CHROME_ARGUMENTS='--disable-dev-shm-usage'
@@ -47,4 +47,4 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV COMPOSER_MEMORY_LIMIT=-1
 ENV PATH="${PATH}:/root/.composer/vendor/bin"
 
-WORKDIR /srv/page_builder
+WORKDIR /srv/symfony

@@ -1,42 +1,42 @@
 services:
     php:
-        container_name: page_builder_php
+        container_name: symfony-test-php
         build:
             context: ./
             dockerfile: ./docker/php/Dockerfile
-            target: page_builder_php
+            target: symfony-test-php
         depends_on:
             - mysql
         environment:
             - PHP_DATE_TIMEZONE=${PHP_DATE_TIMEZONE:-UTC}
         volumes:
-            - ./app:/srv/page_builder:rw,cached
+            - ./app:/srv/symfony:rw,cached
             - ~/.composer:/.composer  # for Composer cache
 
     mysql:
         image: percona
-        container_name: page_builder_mysql
+        container_name: symfony-test-mysql
         restart: always
         environment:
             - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-nopassword}
-            - MYSQL_DATABASE=page_builder
-            - MYSQL_USER=page_builder
+            - MYSQL_DATABASE=symfony
+            - MYSQL_USER=symfony
             - MYSQL_PASSWORD=${MYSQL_PASSWORD:-nopassword}
         volumes:
             - mysql-data:/var/lib/mysql:rw
 
     adminer:
-        container_name: page_builder_adminer
+        container_name: symfony-test-adminer
         depends_on:
             - mysql
         image: adminer
 
     nodejs:
-        container_name: page_builder_nodejs
+        container_name: symfony-test-nodejs
         build:
             context: ./
             dockerfile: ./docker/nodejs/Dockerfile
-            target: page_builder_nodejs
+            target: symfony-test-nodejs
         depends_on:
             - php
         environment:
@@ -44,32 +44,32 @@ services:
             - PHP_HOST=php
             - PHP_PORT=9000
         volumes:
-            - ./app:/srv/page_builder:rw,cached
-            - ./app/public:/srv/page_builder/public:rw,delegated
+            - ./app:/srv/symfony:rw,cached
+            - ./app/public:/srv/symfony/public:rw,delegated
             - ~/.cache:/home/node/.cache
             - ~/.yarn:/home/node/.yarn
 
     nginx:
-        container_name: page_builder_nginx
+        container_name: symfony-test-nginx
         build:
             context: ./
             dockerfile: ./docker/nginx/Dockerfile
-            target: page_builder_nginx
+            target: symfony-test-nginx
         depends_on:
             - php
             - nodejs # to ensure correct build order
         security_opt:
             - no-new-privileges:true
         volumes:
-            - ./app/public:/srv/page_builder/public:ro
+            - ./app/public:/srv/symfony/public:ro
 
     mailer:
-        container_name: page_builder_mailer
+        container_name: symfony-test-mailer
         image: jeanberu/mailcatcher
 
     traefik-proxy:
         image: traefik:v2.11
-        container_name: page_builder_traefik
+        container_name: symfony-test-traefik
         restart: unless-stopped
         hostname: traefik
         security_opt:
@@ -83,12 +83,12 @@ services:
             - ./docker/traefik/config/dynamic.yml:/etc/traefik/dynamic.yml:ro
             - ./docker/traefik/certificates:/etc/traefik/certificates
         networks:
-            - page_builder
+            - symfony
 
 volumes:
     mysql-data:
 
 networks:
     default:
-    page_builder:
+    symfony:
         external: true

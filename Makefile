@@ -26,6 +26,7 @@ MAKE ?= make
 
 install: ## Installs the docker and the application
 install: docker_install install_app assets_install
+	$(MAKE) up-display
 
 start: ## Compose Image docker
 	$(DOCKER_COMPOSE) up -d
@@ -113,14 +114,16 @@ docker_rebuild: ## docker rebuild container
 	$(DOCKER_COMPOSE) build
 
 docker_network_rm: ## docker network delete
-	$(DOCKER) network rm page_builder || true
+	$(DOCKER) network rm symfony || true
 
 docker_network_create: ## docker network creation
 docker_network_create: docker_network_rm
-	$(DOCKER) network create page_builder || true
+	$(DOCKER) network create symfony || true
 
 docker_install: ## Install docker
-docker_install: docker_network_create docker_build start
+docker_install: docker_network_create docker_build
+	$(DOCKER_COMPOSE) up -d
+	$(MAKE) supervisor
 
 docker_bash: ##Get into App docker bash.
 docker_bash:
@@ -280,16 +283,16 @@ up-display:
 	@echo ""
 	@echo "  \033[1;44m URLS List \e[0m"
 	@echo ""
-	@echo "\033[1;94m   - Website: \033[4;33mhttps://page-builder.docker.localhost\e[0m"
+	@echo "\033[1;94m   - Symfony: \033[4;33mhttps://symfony.docker.localhost\e[0m"
 	@echo "\033[1;93m   - Adminer: \033[4;33mhttps://adminer.docker.localhost\e[0m"
 	@echo "\033[1;93m   - Traefik: \033[4;33mhttps://traefik.docker.localhost\e[0m"
 	@echo "\033[1;93m   - Mailer: \033[4;33mhttps://mailer.docker.localhost\e[0m"
 	@echo ""
 	@echo "\033[1;35m============================================================================\e[0m"
 	@echo ""
-	@echo "  \033[1;44m Page builder containers list \e[0m"
+	@echo "  \033[1;44m Symfony containers list \e[0m"
 	@echo "\033[1;36m"
-	@docker ps --filter "name=page_builder" --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}"
+	@docker ps --filter "name=symfony" --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}"
 	@echo ""
 	@echo "\033[1;35m============================================================================\e[0m"
 	@echo ""
@@ -308,9 +311,9 @@ down-display:
 	@echo ""
 	@echo "\033[1;35m============================================================================\e[0m"
 	@echo ""
-	@echo "  \033[1;44m Page builder containers list: \e[0m"
+	@echo "  \033[1;44m Symfony containers list: \e[0m"
 	@echo "\033[1;36m"
-	@docker ps --filter "name=page_builder" --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}"
+	@docker ps --filter "name=symfony" --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}"
 	@echo ""
 	@echo "\033[1;35m============================================================================\e[0m"
 	@echo ""
