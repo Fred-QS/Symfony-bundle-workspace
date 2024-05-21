@@ -35,6 +35,9 @@
             "migrations/.gitignore"
         ]
     },
+    "frgef/neo-page-builder-bundle": {
+        "version": "dev-main"
+    },
     "friends-of-behat/symfony-extension": {
         "version": "2.5",
         "recipe": {

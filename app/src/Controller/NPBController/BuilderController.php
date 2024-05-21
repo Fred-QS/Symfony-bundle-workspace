@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 #[Route('/neo-page-builder', name: 'neo_page_builder_get_', methods: ['POST'])]
 class BuilderController extends AbstractController
