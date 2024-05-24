@@ -1,5 +1,0 @@
-{% set timestamp = get_timestamp() %}
-<div id="npb-block-{{ timestamp }}" data-uuid="{{ timestamp }}" data-pattern="{{ pattern }}" class="npb-block npb-block-{{ blockType }}" {{ stimulus_controller('builder_block') }}>
-    {% set headbandType = 'block' %}
-    {% include 'builder/components/headband.html.twig' %}
-</div>

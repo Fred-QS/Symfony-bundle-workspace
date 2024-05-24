@@ -199,6 +199,18 @@ inspector: ## Run quality, security and tests
 inspector: php-cs-fixer phpstan var-dump-checker php-cs-fixer sf_cc_test database_test phpunit behat
 
 ##
+##Bundle Sandbox commands ===============================================================================================================
+##
+
+sandbox_start: ## Start symfony on local server
+sandbox_start:
+	cd app && symfony serve -d
+
+sandbox_stop: ## Stop symfony on local server
+sandbox_stop:
+	cd app && symfony local:server:stop
+
+##
 ##Utils ===============================================================================================================
 ##
 

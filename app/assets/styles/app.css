@@ -23,10 +23,10 @@ input, select {
     align-items: center;
     padding: 20px 40px;
     border-radius: 4px;
-    background-color: var(--main-color);
+    background-color: darkslateblue;
     cursor: pointer;
     border: none;
-    color: var(--text-color);
+    color: white;
     font-size: 18px;
     font-weight: bold;
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
@@ -34,6 +34,6 @@ input, select {
 }
 
 .page-settings-button:active {
-    background-color: var(--placeholder-bg-main-color);
+    background-color: blueviolet;
 }
 

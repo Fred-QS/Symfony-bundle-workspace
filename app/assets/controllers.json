@@ -1,5 +1,23 @@
 {
     "controllers": {
+        "@frgef/neo-page-builder-bundle": {
+            "frgef_neo_page_builder_block": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "frgef_neo_page_builder_page": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "frgef_neo_page_builder_row": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "frgef_neo_page_builder_section": {
+                "enabled": true,
+                "fetch": "eager"
+            }
+        },
         "@symfony/ux-turbo": {
             "turbo-core": {
                 "enabled": true,

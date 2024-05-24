@@ -1,0 +1,3 @@
+neo_page_builder:
+  resource: '@NeoPageBuilderBundle/config/routing/neo_page_builder.xml'
+  prefix: /_npb
